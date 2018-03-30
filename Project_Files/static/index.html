@@ -11,10 +11,10 @@
     <title>The Looking Glass</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="styles/bootstrap.min.css" rel="stylesheet">
+    <link href="{{url_for('static', filename='styles/bootstrap.min.css')}}" type="text/css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="styles/style.css" rel="stylesheet">
+    <link href="{{url_for('static', filename='styles/style.css')}}" rel="stylesheet">
 
   </head>
 
@@ -46,7 +46,7 @@
         <div class="carousel-inner">
           <!-- Slide One - Set the background image for this slide in the line below -->
           <div class="carousel-item active">
-            <img src="PICTURES/index-1.jpg" alt="image">
+            <img src="static/PICTURES/index-1.jpg" alt="image">
             <div class="carousel-caption d-none d-md-block">
 
 
@@ -54,7 +54,7 @@
           </div>
           <!-- Slide Two - Set the background image for this slide in the line below -->
           <div class="carousel-item" >
-            <img src="PICTURES/index-2.jpg" alt="image">
+            <img src="static/PICTURES/index-2.jpg" alt="image">
             <div class="carousel-caption d-none d-md-block">
 
 
@@ -62,7 +62,7 @@
           </div>
           <!-- Slide Three - Set the background image for this slide in the line below -->
           <div class="carousel-item" >
-            <img src="PICTURES/index-3.jpg" alt="image">
+            <img src="static/PICTURES/index-3.jpg" alt="image">
             <div class="carousel-caption d-none d-md-block">
 
 
@@ -170,8 +170,8 @@
     </footer>
 
     <!-- Bootstrap core JavaScript -->
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <script src="{{url_for('static', filename='js/jquery-3.3.1.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
 
   </body>
 
