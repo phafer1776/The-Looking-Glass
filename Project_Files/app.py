@@ -30,7 +30,7 @@ def db_work():
 
     # Create user table
     cur.execute('CREATE TABLE IF NOT EXISTS user(id integer PRIMARY KEY, firstName text, lastName text, '
-                'username text, password text, contributor text, downloads integer)')
+                'username text, password text, contributor text, downloads integer);')
     # Create image table
     cur.execute('CREATE TABLE IF NOT EXISTS image(id integer PRIMARY KEY, title text, userID integer, '
                 'rating float, description text, filename text, public boolean, '
