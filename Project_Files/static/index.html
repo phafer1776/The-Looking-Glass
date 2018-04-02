@@ -11,10 +11,11 @@
     <title>The Looking Glass</title>
 
     <!-- Bootstrap core CSS -->
+    <link href="{{url_for('static', filename='styles/style.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='styles/bootstrap.min.css')}}" type="text/css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="{{url_for('static', filename='styles/style.css')}}" rel="stylesheet">
+
 
   </head>
 
@@ -25,11 +26,8 @@
       <div class="container">
         <a class="navbar-brand" href="index.html">The Looking Glass</a>
         <div class="topnav">
-          <div class="search-container">
-              <input type="text" placeholder="Search..." name="search">
-              <button type="submit"><i class="fa fa-search"></i></button>
-          </div>
-          <a class="active" href="placeholder">Signup/Login</a>
+
+        <a class="active" href="placeholder">Signup/Login</a>
 
 
         </div>

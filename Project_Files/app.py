@@ -10,6 +10,11 @@ def home():
     return render_template('/index.html')
 
 
+@app.route('/photo')
+def load_photo_page():
+    return render_template('/singlephoto.html')
+
+
 @app.route('/db')
 def db_work():
     """
