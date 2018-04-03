@@ -44,7 +44,7 @@ def db_work():
                 'FOREIGN KEY (userID) REFERENCES user (id), FOREIGN KEY (imageID) REFERENCES image (id))')
 
 
-    
+
 
 
 
