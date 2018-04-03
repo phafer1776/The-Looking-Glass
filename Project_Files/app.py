@@ -25,6 +25,7 @@ def db_work():
     in the query. If you only need one variable, you still need to use a 1 item tuple.
     eg. (username,)
     """
+
     con = connect('looking_glass.db')
     cur = con.cursor()  # Get cursor
 
@@ -41,6 +42,13 @@ def db_work():
     # Create comment table
     cur.execute('CREATE TABLE IF NOT EXISTS comment(id integer PRIMARY KEY, userID integer, imageID integer, '
                 'FOREIGN KEY (userID) REFERENCES user (id), FOREIGN KEY (imageID) REFERENCES image (id))')
+
+
+    
+
+
+
+    # Create user if user doesn't exist
 
 
 def connect(db_filename):
