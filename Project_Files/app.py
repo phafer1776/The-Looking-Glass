@@ -15,6 +15,14 @@ def load_photo_page():
     return render_template('/singlephoto.html')
 
 
+@app.route('/dashboard/<int:uid>', methods=['GET', 'POST'])
+def dashboard(uid):
+    con = connect('looking_glass.db')
+    cur = con.cursor()
+    return render_template('/dashboard.html', user=cur.execute("""SELECT username FROM user WHERE id = ?""",
+                                                               (uid,)).fetchone()[0])
+
+
 @app.route('/db')
 def db_work():
     """
@@ -29,18 +37,26 @@ def db_work():
     cur = con.cursor()  # Get cursor
 
     # Create user table
-    cur.execute('CREATE TABLE IF NOT EXISTS user(id integer PRIMARY KEY, firstName text, lastName text, '
-                'username text, password text, contributor text, downloads integer)')
+    cur.execute('CREATE TABLE IF NOT EXISTS user(id integer PRIMARY KEY AUTOINCREMENT, firstName text, lastName text, '
+                'username text, password text, contributor boolean, downloads integer)')
     # Create image table
-    cur.execute('CREATE TABLE IF NOT EXISTS image(id integer PRIMARY KEY, title text, userID integer, '
+    cur.execute('CREATE TABLE IF NOT EXISTS image(id integer PRIMARY KEY AUTOINCREMENT, title text, userID integer, '
                 'rating float, description text, filename text, public boolean, '
                 'FOREIGN KEY (userID) REFERENCES user (id))')
     # Create tag table
-    cur.execute('CREATE TABLE IF NOT EXISTS tag(id integer PRIMARY KEY, imageID integer, tag text, '
+    cur.execute('CREATE TABLE IF NOT EXISTS tag(id integer PRIMARY KEY AUTOINCREMENT, imageID integer, tag text, '
                 'FOREIGN KEY (imageID) REFERENCES image (id))')
     # Create comment table
-    cur.execute('CREATE TABLE IF NOT EXISTS comment(id integer PRIMARY KEY, userID integer, imageID integer, '
-                'FOREIGN KEY (userID) REFERENCES user (id), FOREIGN KEY (imageID) REFERENCES image (id))')
+    cur.execute('CREATE TABLE IF NOT EXISTS comment(id integer PRIMARY KEY AUTOINCREMENT, userID integer, '
+                'imageID integer, FOREIGN KEY (userID) REFERENCES user (id), '
+                'FOREIGN KEY (imageID) REFERENCES image (id))')
+
+    # cur.execute("""INSERT INTO user(firstName, lastName, username, password, contributor, downloads) VALUES
+    # (?,?,?,?,?,?);""", ('Billy', 'Idol', 'theBman', 'password', True, 5))
+    # print('Added')
+    # cur.execute('SELECT * FROM user')
+    # print(cur.fetchall())
+    con.commit()
 
 
 def connect(db_filename):
