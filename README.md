@@ -1,4 +1,13 @@
-# Flask Template
+# Looking Glass
 
 # Description
-A flask template with mySQL, simple authentication, jQuery, and Bootstrap 4
+Final Project for Advanced Python - Spring 2018
+
+A flask webapp built by Team 2
+
+Members:
+	Timothy Carney
+	Paul Hafer
+	Joshua Imarhiagbe
+	Denis Saez Rodriguez
+	Conner Wulf
