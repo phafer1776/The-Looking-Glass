@@ -15,6 +15,8 @@ def load_photo_page():
     return render_template('/singlephoto.html')
 
 
+
+
 @app.route('/db')
 def db_work():
     """
