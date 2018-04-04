@@ -50,6 +50,10 @@ def db_work():
     cur.execute('CREATE TABLE IF NOT EXISTS comment(id integer PRIMARY KEY AUTOINCREMENT, userID integer, '
                 'imageID integer, FOREIGN KEY (userID) REFERENCES user (id), '
                 'FOREIGN KEY (imageID) REFERENCES image (id))')
+	 # Create rating table				 
+	 cur.execute('CREATE TABLE IF NOT EXISTS rating(id integer PRIMARY KEY AUTOINCREMENT, userID integer, '
+                'imageID integer, rating integer, FOREIGN KEY (userID) REFERENCES user (id), '
+                'FOREIGN KEY (imageID) REFERENCES image (id))')
 
     # cur.execute("""INSERT INTO user(firstName, lastName, username, password, contributor, downloads) VALUES
     # (?,?,?,?,?,?);""", ('Billy', 'Idol', 'theBman', 'password', True, 5))
