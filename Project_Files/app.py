@@ -50,7 +50,6 @@ def db_work():
 
 # Create user if user doesn't exist
 
-@app.route('')
 def connect(db_filename):
     """
     This function is used to connect to the database, and display an error to the console
