@@ -67,6 +67,119 @@ def db_work():
     # print('Added')
     # cur.execute('SELECT * FROM user')
     # print(cur.fetchall())
+
+    def get_user(cursor, username):
+
+        return cursor.execute("select * from user u where u.username = ?;", username)
+
+    def create_user(firstname, lastname, username, password, contributor, downloads, cursor):
+
+        if not get_user(cursor, username):
+
+            cursor.execute(
+                "INSERT INTO user(firstname, lastName, username, password, contributor, downloads) "
+                "VALUES (?,?,?,?,?,?);",(firstname, lastname, username, username, password, contributor, downloads))
+
+            print('Added {}'.format(username))
+
+        else:
+            print('{} already exists'.format(username))
+
+    def get_image(cursor, filename, userid):
+
+        return cursor.execute("select * from image i where i.filename = ? and i.userid = ?;", (filename, userid))
+
+    def insert_image(id, title, userid, rating, description, filename, public, cursor):
+
+        if not get_image(cursor, filename, userid):
+
+            cursor.execute("insert into image(id, title, userid, rating, description, filename, public) "
+                           "values (?,?,?,?,?,?,?);", (id, title, userid, rating, description, filename, public))
+
+    def get_image_by_tag(cursor, tag):
+
+        return cursor.execute("select * from image i tag t where i.id = t.imageID and t.tag = ?;"(tag))
+
+    def set_image_tag(cursor, tagid, imageid, tag):
+
+        cursor.execute("insert into tag(id, imageID, tag) values (?,?,?);" (tagid, imageid, tag))
+
+    def get_username(cursor, user_id):
+
+        return cursor.execute("select u.username from user u where u.id = ?;", (user_id))
+
+    def get_firstname(cursor, user_id):
+
+        return cursor.execute("select u.firstName from user u where u.id = ?;", (user_id))
+
+    def get_lastname(cursor, user_id):
+
+        return cursor.execute("select u.lastName from user u where u.id = ?;",(user_id))
+
+    def get_password(cursor, user_id):
+
+        return cursor.execute("select u.password from user u where u.id = ?;", (user_id))
+
+    def get_image_title(cursor, image_id):
+
+        return cursor.execute("select i.username from image i where i.id = ?;", (image_id))
+
+    def get_rating(cursor, image_id):
+
+        return cursor.execute("select i.rating from user i where i.id = ?;", (image_id))
+
+    def set_rating(cursor, image_rate, image_id):
+
+        cursor.execute("update image set rating = ? where id = ?;", (image_rate, image_id))
+
+    def get_description(cursor, image_id):
+
+        return cursor.execute("select i.description from image i where i.id = ?;", (image_id))
+
+    def is_public(cursor, image_id):
+
+        return cursor.execute("select i.public from image i where i.id = ?;", image_id)
+
+    def update_public(cursor, image_id, public):
+
+        cursor.execute("update image set public = ? where i.id = ?;", (public, image_id))
+
+    def get_tags(cursor, image_id):
+
+        return cursor.execute("select t.tag from tag t where t.imageID = ?;", image_id)
+
+    def is_contributor(cursor, user_id):
+
+        return cursor.execute("select u.contributor from user u where u.id = ?;", user_id)
+
+    def update_contributor(cursor, user_id, contributes):
+
+        cursor.execute("update user set contributor = ? where u.id = ?;", (contributes, user_id))
+
+    def get_download_count(cursor, user_id):
+
+        return cursor.execute("select u.downloads from user u where u.id = ?;", user_id)
+
+    def update_download_count(cursor, user_id):
+
+        cursor.execute("update user set downloads = ? "
+                              "where id = ?", (get_download_count(cursor, user_id) + 1, user_id))
+
+    def get_comment(cursor, comment_id):
+
+        return cursor.execute("select * from comment c where c.id = ?;", comment_id)
+
+    def get_image_comments(cursor, image_id):
+
+        return cursor.execute("select * from comment c where c.imageID = ?;", image_id)
+    
+    def add_comment(cursor, comment_id, user_id, image_id):
+
+        if not get_comment(cursor, comment_id):
+
+            cursor.execute("insert into comment (id, userID, imageID) values(?,?,?);", (comment_id, user_id, image_id))
+
+
     con.commit()
 
 
