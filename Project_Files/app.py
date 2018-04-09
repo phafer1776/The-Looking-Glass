@@ -172,7 +172,7 @@ def db_work():
     def get_image_comments(cursor, image_id):
 
         return cursor.execute("select * from comment c where c.imageID = ?;", image_id)
-
+    
     def add_comment(cursor, comment_id, user_id, image_id):
 
         if not get_comment(cursor, comment_id):
