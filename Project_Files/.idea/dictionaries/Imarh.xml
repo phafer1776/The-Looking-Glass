@@ -1,7 +1,9 @@
 <component name="ProjectDictionaryState">
   <dictionary name="Imarh">
     <words>
-      <w>singlephoto</w>
+      <w>firstname</w>
+      <w>lastname</w>
+      <w>userid</w>
     </words>
   </dictionary>
 </component>
