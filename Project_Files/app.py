@@ -17,6 +17,14 @@ def signin():
 def upload():
     return render_template('/picture-upload.html')
 
+@app.route('/popular')
+def popular():
+    return render_template('/Popular.html')
+
+@app.route('/private')
+def private():
+    return render_template('/Private.html')
+
 @app.route('/photo')
 def load_photo_page():
     return render_template('/singlephoto.html')
