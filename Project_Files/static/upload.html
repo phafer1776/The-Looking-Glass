@@ -1,14 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Upload image</title>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
-<style >
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+Upload
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<style type="text/css">
+    
   .login-form {
     width: 340px;
       margin: 50px auto;
@@ -39,28 +39,30 @@
         margin: 20px 0;
     }
 
+
 </style>
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
 <div class="login-form" >
-    <form action="placeholder" method="post">
+    <form action="/upload" method="POST">
         <h2 class="text-center">Upload image</h2>
          <div class="form-group" style="text-align: center">
             <label class="btn btn-default btn-file" >Browse File
-                <input type="file" style="display: none;">
+                <input type="file" style="display: none;" name="file">
             </label>
         </div>
         <div class="form-group">
             <label for="title"></label>
-            <input type="text" class="form-control" placeholder="Title" required="required" id="title">
+            <input type="text" class="form-control" placeholder="Title" required="required" name="title">
         </div>
         <div class="form-group">
             <label for="tag"></label>
-            <input type="text" class="form-control" placeholder="Tag (separate by comma)" required="required" id="tag">
+            <input type="text" class="form-control" placeholder="Tag (separate by comma)" required="required" name="tag">
         </div>
         <div class="form-group">
             <label for="description"></label>
-            <textarea class="form-control" placeholder="Description" required="" id="description" rows="5" style="max-width: 100%" maxlength="160"></textarea>
+            <textarea class="form-control" placeholder="Description" required="" name="description" rows="5" style="max-width: 100%" maxlength="160"></textarea>
         </div>
         <div class="form-group">
             <button type="submit" class="btn btn-primary btn-block">Submit</button>
@@ -68,6 +70,4 @@
     </form>
 
 </div>
-
-</body>
-</html>                                                               
+{% endblock %}
