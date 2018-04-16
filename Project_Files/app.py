@@ -29,6 +29,10 @@ def private():
 def load_photo_page():
     return render_template('/singlephoto.html')
 
+@app.route('/MissionStatement')
+def mission_statement():
+    return render_template('/MissionStatement.html')
+
 
 @app.route('/dashboard/<int:uid>', methods=['GET', 'POST'])
 def dashboard(uid):
