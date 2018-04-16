@@ -99,7 +99,7 @@ def private():
 def load_photo_page():
     return render_template('/singlephoto.html')
 
-@app.route('/MissionStatement')
+@app.route('/mission')
 def mission_statement():
     return render_template('/MissionStatement.html')
 
