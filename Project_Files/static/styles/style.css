@@ -49,6 +49,9 @@ body {
     text-align: center;
 
 }
+#footer{
+  padding-top: 50px;
+}
 #search-button{
     height: 30;
     border-radius: 50%;
@@ -563,7 +566,12 @@ img {
     font-size: 14px;
 }
 
-
+#mission-header{
+  padding-top: 50px;
+}
+#mission {
+  padding-right: 20px;
+}
 
 @media screen and (max-width: 600px) {
   .topnav .search-container {
