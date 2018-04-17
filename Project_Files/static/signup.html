@@ -1,28 +1,64 @@
-{% extends "bootstrap/base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Registration</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+<style >
+  .login-form {
+    width: 340px;
+      margin: 50px auto;
+  }
+    .login-form form {
+      margin-bottom: 15px;
+        background: #f7f7f7;
+        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+        padding: 30px;
+    }
+    .login-form h2 {
+        margin: 0 0 15px;
+    }
+    .form-control, .btn {
+        min-height: 38px;
+        border-radius: 2px;
+    }
+    .btn {        
+        font-size: 15px;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
 
-{% block title %}
-Sign Up
-{% endblock %}
+<div class="login-form" id="signup">
+    <form action="/signup" method="post">
+        <h2 class="text-center">Sign Up</h2>    
+        <p>Please fill in this form to create an account!</p>   
+        <div class="form-group">
+            <input type="text" class="form-control" placeholder="First Name" required="required" name="firstname">
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" placeholder="Last Name" required="required" name="lastname">
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" placeholder="Username" required="required" name="username">
+        </div>
+        <div class="form-group">
+            <input type="password" class="form-control" placeholder="Password" required="required" name="password">
+        </div>
+        <div class="form-group">
+            <input type="password" class="form-control" placeholder="Re-enter Password" required="required" name="re_password">
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">Sign up</button>
+        </div>
+    </form>
+    <p class="text-center"><a href="/login" >Log in</a></p>
+</div>
 
-{% block styles %}
-{{super()}}
-<link rel="stylesheet" href="static/styles/signin.css">
-{% endblock %}
-
-{% block content %}
-<div class="container">
-
-  <form class="form-signin" method="POST" action="/signup">
-    <h2 class="form-signin-heading">Sign Up</h2>
-    {{ form.hidden_tag() }}
-    {{ wtf.form_field(form.firtsName) }}
-    {{ wtf.form_field(form.lastName) }}
-    {{ wtf.form_field(form.username) }}
-	{{ wtf.form_field(form.password) }}
-	{{ wtf.form_field(form.repassword) }}
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Please Sign Up</button>
-  </form>
-
-</div> <!-- /container -->
-{% endblock %}
+</body>
+</html>                                                               

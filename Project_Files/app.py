@@ -1,29 +1,9 @@
 from flask import Flask, request, Response, json, jsonify, render_template, redirect, url_for
 import sqlite3 as sql
-from flask_bootstrap import Bootstrap
-from flask_wtf import FlaskForm 
-from wtforms import StringField, PasswordField, BooleanField, FileField
-from wtforms.validators import InputRequired, Email, Length
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-
 
 app = Flask(__name__, template_folder='static')
 app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = 'Something hard to guess!'
-bootstrap = Bootstrap(app)
-
-
-class LoginForm(FlaskForm):
-    username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
-    password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
-
-class RegisterForm(FlaskForm):
-    firtsName = StringField('First Name', validators=[InputRequired(), Length(min=2, max=50)])
-    lastName = StringField('Last Name', validators=[InputRequired(), Length(min=2, max=15)])
-    username = StringField('username', validators=[InputRequired(), Length(min=2, max=15)])
-    password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
-    repassword = PasswordField('Re-enter password', validators=[InputRequired(), Length(min=8, max=80)])
 
 @app.route('/')
 def home():
@@ -31,59 +11,58 @@ def home():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    form = LoginForm()
     if request.method == 'POST':
         try:
+            _username = request.form['username']
+            _password = request.form['password']
             con = sql.connect('looking_glass.db')
             cur = con.cursor()
-            userpassword = cur.execute("SELECT password FROM user WHERE username ='{}';".format(form.username.data)).fetchone()[0]
-            if userpassword == generate_password_hash(form.password.data, method='sha256'):
-                return redirect(url_for('dashboard')+'/'+'{}'.format(form.username.data))
+            cur.execute("SELECT password FROM user WHERE username = '{}';".format(_username))
+            if _password == cur.fetchone()[0]:
+               return "<h1> should re direct to dashboard"
             else:
                 return redirect(url_for('login'))
         except:
-            return redirect(url_for('login'))
-    return render_template('login.html', form=form)
+            return redirect(url_for('signup'))
+        finally:
+            con.close()
+    return render_template('login.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    form = RegisterForm()
-
     if request.method == 'POST':
         try:
-            hashed_password = generate_password_hash(form.password.data, method='sha256')
-            con = sql.connect('looking_glass.db')
-            cur = con.cursor()
-            cur.execute("INSERT INTO user(firstname, lastName, username, password, contributor, downloads) "
-                    "VALUES (?,?,?,?,?,?);",(form.firtsName.data, form.lastName.data, form.username.data, 
-                hashed_password, 'contributor', 'downloads'))
-            con.commit()
-            return redirect(url_for('login'))
+            _firstname = request.form['firstname']
+            _lastname = request.form['lastname']
+            _username = request.form['username']
+            _password = request.form['password']
+            _re_password = request.form['re_password']
+            if _password == _re_password:      
+                con = sql.connect('looking_glass.db')
+                cur = con.cursor()
+                cur.execute("INSERT INTO user(firstname, lastName, username, password, contributor, downloads)"
+                    "VALUES (?,?,?,?,?,?);",(_firstname, _lastname, _username, _password, False, 0))
+                con.commit()
+                return redirect(url_for('login'))
+            else:
+                render_template('signup.html')
         except:
             con.rollback()
             return redirect(url_for('signup'))
         finally:
             con.close()
-    return render_template('signup.html', form=form)
+    return render_template('signup.html')
 
 @app.route('/upload')
 def upload():
 
     if request.method == 'POST':
         try:
-            con = sql.connect('looking_glass.db')
-            cur = con.cursor()
-            cur.execute("INSERT INTO image(firstname, lastName, username, password, contributor, downloads) "
-                    "VALUES (?,?,?,?,?,?);",(form.firtsName.data, form.lastName.data, form.username.data, 
-                form.password.data, 'contributor', 'downloads'))
-            con.commit()
-            return redirect(url_for('login'))
+            pass # store the images
         except:
-            con.rollback()
-            return redirect(url_for('signup'))
+            pass # maybe tell user somethin went wrong
         finally:
-            con.close()
-
+            pass
     return render_template('upload.html')
 
 
