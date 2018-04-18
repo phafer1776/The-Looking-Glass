@@ -13,6 +13,9 @@
         <!-- Link Bootstrap and CSS -->
         <link href="{{url_for('static', filename='styles/style.css')}}" rel="stylesheet">
         <link href="{{url_for('static', filename='styles/bootstrap.min.css')}}" type="text/css" rel="stylesheet">
+        <!-- Bootstrap core JavaScript -->
+        <script src="{{url_for('static', filename='js/jquery-3.3.1.min.js')}}"></script>
+        <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
         <script src="{{url_for('static', filename='js/script.js')}}"></script>
     </head>
 
@@ -22,7 +25,7 @@
             <div class="container">
                 <a href="#" class="navbar-left"><img src="/static/PICTURES/logo_White.png"></a>
                 <!--<a class="navbar-brand" href="index.html">The Looking Glass</a> -->
-                <a class="navbar-left" onclick="show_overlay()" href="#">Sign Up</a>
+                <a class="navbar-left" id="signup-link" href="#">Sign Up</a>
                 <a class="navbar-left" href="/Login">Login</a>
             </div>
             <!-- /.container -->
@@ -192,9 +195,7 @@
             <!-- /.container -->
         </footer>
 
-        <!-- Bootstrap core JavaScript -->
-        <script src="{{url_for('static', filename='js/jquery-3.3.1.min.js')}}"></script>
-        <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+
 
     </body>
 </html>
