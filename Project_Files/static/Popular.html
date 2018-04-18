@@ -1,131 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>The Looking Glass - Popular Photos</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+        <!-- Link Bootstrap and CSS -->
+        <link href="{{url_for('static', filename='styles/style.css')}}" rel="stylesheet">
+        <link href="{{url_for('static', filename='styles/bootstrap.min.css')}}" type="text/css" rel="stylesheet">
+    </head>
 
-    <title>The Looking Glass</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="{{url_for('static', filename='styles/style.css')}}" rel="stylesheet">
-    <link href="{{url_for('static', filename='styles/bootstrap.min.css')}}" type="text/css" rel="stylesheet">
-
-    <!-- Custom styles for this template -->
-
-
-  </head>
-
-  <body>
-
-    <!-- Navigation -->
-    <  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container">
-          <a href="#" class="navbar-left"><img src="/static/PICTURES/logo_White.png"></a>
-
-
-                      <a class="navbar-left" href="#">Home</a>
-
-
-
-                      <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" href="#">ACCOUNT HERE
-                                    <span class="caret"></span></button>
-                                    <ul class="dropdown-menu">
-                                      <li><a href="#">Your Homepage</a></li>
-                                      <li><a href="http://localhost:5000/upload">Upload Photos</a></li>
-                                      <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
-                                    </ul>
-                      </div>
-          </div>
+    <body>
+        <!-- Navigation section -->
+        <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
+            <div class="container">
+                <a href="/" class="navbar-left"><img src="/static/PICTURES/logo_White.png"></a>
+                <a class="navbar-left" href="/">Home</a>
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" href="#">{{user}}
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="/Dashboard">Your Homepage</a></li>
+                        <li><a href="/Upload">Upload Photos</a></li>
+                        <li><a href="/Logout"><span class="glyphicon glyphicon-log-in"></span>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- /.container -->
         </nav>
 
+        <!-- Page Content -->
+        <div class="container">
+            <!-- Page Heading/Breadcrumbs -->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <h3>Popular Photos</h3>
+                </li>
+            </ol>
 
-    <!-- Page Content -->
-    <div class="container">
-
-      <!-- Page Heading/Breadcrumbs -->
-
-
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-          <h3>Popular Photos</h3>
-        </li>
-
-        <div class="gallery">
-          <figure>
-            <img src="static/PICTURES/index-4.jpg" alt="" />
-            <figcaption>Daytona Beach <small>United States</small></figcaption>
-          </figure>
-          <figure>
-            <img src="static/PICTURES/index-5.jpg" alt="" />
-            <figcaption>Териберка, gorod Severomorsk <small>Russia</small></figcaption>
-          </figure>
-          <figure>
-            <img src="static/PICTURES/index-6.jpg" alt="" />
-            <figcaption>
-              Bad Pyrmont <small>Deutschland</small>
-            </figcaption>
-          </figure>
-          <figure>
-            <img src="static/PICTURES/index-7.jpg" alt="" />
-            <figcaption>Yellowstoxne National Park <small>United States</small></figcaption>
-          </figure>
-          <figure>
-            <img src="static/PICTURES/index-8.jpg" alt="" />
-            <figcaption>Quiraing, Portree <small>United Kingdom</small></figcaption>
-          </figure>
-          <figure>
-            <img src="static/PICTURES/index-9.jpg" alt="" />
-            <figcaption>Highlands <small>United States</small></figcaption>
-          </figure>
-          <figure>
-            <img src="static/PICTURES/index-4.jpg" alt="" />
-            <figcaption>Daytona Beach <small>United States</small></figcaption>
-          </figure>
-          <figure>
-            <img src="static/PICTURES/index-5.jpg" alt="" />
-            <figcaption>Териберка, gorod Severomorsk <small>Russia</small></figcaption>
-          </figure>
-          <figure>
-            <img src="static/PICTURES/index-6.jpg" alt="" />
-            <figcaption>
-              Bad Pyrmont <small>Deutschland</small>
-            </figcaption>
-          </figure>
-          <figure>
-            <img src="static/PICTURES/index-7.jpg" alt="" />
-            <figcaption>Yellowstoxne National Park <small>United States</small></figcaption>
-          </figure>
-          <figure>
-            <img src="static/PICTURES/index-8.jpg" alt="" />
-            <figcaption>Quiraing, Portree <small>United Kingdom</small></figcaption>
-          </figure>
-          <figure>
-            <img src="static/PICTURES/index-9.jpg" alt="" />
-            <figcaption>Highlands <small>United States</small></figcaption>
-          </figure>
+            <!-- Gallery section -->
+            <div class="gallery">
+                <figure>
+                    <img src="static/PICTURES/index-4.jpg" alt="" />
+                    <figcaption>Daytona Beach <small>United States</small></figcaption>
+                </figure>
+                <figure>
+                    <img src="static/PICTURES/index-5.jpg" alt="" />
+                    <figcaption>Териберка, gorod Severomorsk <small>Russia</small></figcaption>
+                </figure>
+                <figure>
+                    <img src="static/PICTURES/index-6.jpg" alt="" />
+                    <figcaption>Bad Pyrmont <small>Deutschland</small></figcaption>
+                </figure>
+                <figure>
+                    <img src="static/PICTURES/index-7.jpg" alt="" />
+                    <figcaption>Yellowstoxne National Park <small>United States</small></figcaption>
+                </figure>
+                <figure>
+                    <img src="static/PICTURES/index-8.jpg" alt="" />
+                    <figcaption>Quiraing, Portree <small>United Kingdom</small></figcaption>
+                </figure>
+                <figure>
+                    <img src="static/PICTURES/index-9.jpg" alt="" />
+                    <figcaption>Highlands <small>United States</small></figcaption>
+                </figure>
+                <figure>
+                    <img src="static/PICTURES/index-4.jpg" alt="" />
+                    <figcaption>Daytona Beach <small>United States</small></figcaption>
+                </figure>
+                <figure>
+                    <img src="static/PICTURES/index-5.jpg" alt="" />
+                    <figcaption>Териберка, gorod Severomorsk <small>Russia</small></figcaption>
+                </figure>
+                <figure>
+                    <img src="static/PICTURES/index-6.jpg" alt="" />
+                    <figcaption>Bad Pyrmont <small>Deutschland</small></figcaption>
+                </figure>
+                <figure>
+                    <img src="static/PICTURES/index-7.jpg" alt="" />
+                    <figcaption>Yellowstoxne National Park <small>United States</small></figcaption>
+                </figure>
+                <figure>
+                    <img src="static/PICTURES/index-8.jpg" alt="" />
+                    <figcaption>Quiraing, Portree <small>United Kingdom</small></figcaption>
+                </figure>
+                <figure>
+                    <img src="static/PICTURES/index-9.jpg" alt="" />
+                    <figcaption>Highlands <small>United States</small></figcaption>
+                </figure>
+            </div>
+            <!-- /.gallery -->
         </div>
+        <!-- /.container -->
 
-    </div>
-    <!-- /.container -->
+        <!-- Footer -->
+        <footer class="py-5 bg-dark">
+            <div class="container">
+                <p class="m-0 text-center text-white">Copyright &copy; The Looking Glass 2018</p>
+            </div>
+            <!-- /.container -->
+        </footer>
 
-    <!-- Footer -->
-    <footer class="py-5 bg-dark">
-      <div class="container">
-        <p class="m-0 text-center text-white">Copyright &copy; Your Website 2018</p>
-      </div>
-      <!-- /.container -->
-    </footer>
-
-    <!-- Bootstrap core JavaScript -->
-    <script src="{{url_for('static', filename='js/jquery-3.3.1.min.js')}}"></script>
-    <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
-
-
-  </body>
-
+        <!-- Bootstrap core JavaScript -->
+        <script src="{{url_for('static', filename='js/jquery-3.3.1.min.js')}}"></script>
+        <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+    </body>
 </html>

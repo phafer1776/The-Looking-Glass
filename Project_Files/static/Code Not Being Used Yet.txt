@@ -1,0 +1,392 @@
+-------------------------------------------------------------------------------
+Login / Register Functionality (Dennis)
+-------------------------------------------------------------------------------
+
+from flask_bootstrap import Bootstrap
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField, FileField
+from wtforms.validators import InputRequired, Email, Length
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+
+bootstrap = Bootstrap(app)
+
+class LoginForm(FlaskForm):
+    username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
+    password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
+
+class RegisterForm(FlaskForm):
+    firtsName = StringField('First Name', validators=[InputRequired(), Length(min=2, max=50)])
+    lastName = StringField('Last Name', validators=[InputRequired(), Length(min=2, max=15)])
+    username = StringField('username', validators=[InputRequired(), Length(min=2, max=15)])
+    password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
+    repassword = PasswordField('Re-enter password', validators=[InputRequired(), Length(min=8, max=80)])
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if request.method == 'POST':
+        try:
+            con = sql.connect('looking_glass.db')
+            cur = con.cursor()
+            userpassword = cur.execute("SELECT password FROM user WHERE username ='{}';".format(form.username.data)).fetchone()[0]
+            if userpassword == generate_password_hash(form.password.data, method='sha256'):
+                return redirect(url_for('dashboard')+'/'+'{}'.format(form.username.data))
+            else:
+                return redirect(url_for('login'))
+        except:
+            return redirect(url_for('login'))
+    return render_template('Login.html', form=form)
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    form = RegisterForm()
+
+    if request.method == 'POST':
+        try:
+            hashed_password = generate_password_hash(form.password.data, method='sha256')
+            con = sql.connect('looking_glass.db')
+            cur = con.cursor()
+            cur.execute("INSERT INTO user(firstname, lastName, username, password, contributor, downloads) "
+                    "VALUES (?,?,?,?,?,?);",(form.firtsName.data, form.lastName.data, form.username.data, 
+                hashed_password, 'contributor', 'downloads'))
+            con.commit()
+            return redirect(url_for('login'))
+        except:
+            con.rollback()
+            return redirect(url_for('signup'))
+        finally:
+            con.close()
+    return render_template('SignUp.html', form=form)
+	 
+
+	 
+-------------------------------------------------------------------------------
+Signup.html (Dennis)
+------------------------------------------------------------------------------- 
+	 
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+Sign Up
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="static/styles/signin.css">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <form class="form-signin" method="POST" action="/signup">
+    <h2 class="form-signin-heading">Sign Up</h2>
+    {{ form.hidden_tag() }}
+    {{ wtf.form_field(form.firtsName) }}
+    {{ wtf.form_field(form.lastName) }}
+    {{ wtf.form_field(form.username) }}
+	{{ wtf.form_field(form.password) }}
+	{{ wtf.form_field(form.repassword) }}
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Please Sign Up</button>
+  </form>
+
+</div> <!-- /container -->
+{% endblock %}
+
+
+-------------------------------------------------------------------------------
+Login.html (Dennis)
+------------------------------------------------------------------------------- 
+
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="static/styles/signin.css">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+
+      <form class="form-signin" method="POST" action="/login">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        {{ form.hidden_tag() }}
+        {{ wtf.form_field(form.username) }}
+        {{ wtf.form_field(form.password) }}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+
+    </div> <!-- /container -->
+{% endblock %}
+
+	 
+-------------------------------------------------------------------------------
+Upload Functionality (Dennis)
+-------------------------------------------------------------------------------
+	 
+@app.route('/upload')
+def upload():
+
+    if request.method == 'POST':
+        try:
+            con = sql.connect('looking_glass.db')
+            cur = con.cursor()
+            cur.execute("INSERT INTO image(firstname, lastName, username, password, contributor, downloads) "
+                    "VALUES (?,?,?,?,?,?);",(form.firtsName.data, form.lastName.data, form.username.data, 
+                form.password.data, 'contributor', 'downloads'))
+            con.commit()
+            return redirect(url_for('login'))
+        except:
+            con.rollback()
+            return redirect(url_for('signup'))
+        finally:
+            con.close()
+
+    return render_template('Upload.html')
+
+	 
+-------------------------------------------------------------------------------
+Upload.html (Dennis)
+-------------------------------------------------------------------------------	
+	
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+Upload
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<style type="text/css">
+    
+  .login-form {
+    width: 340px;
+      margin: 50px auto;
+  }
+    .login-form form {
+      margin-bottom: 15px;
+        background: #f7f7f7;
+        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+        padding: 30px;
+    }
+    .login-form h2 {
+        margin: 0 0 15px;
+    }
+    .form-control, .btn {
+        min-height: 38px;
+        border-radius: 2px;
+    }
+    .btn {        
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    body {
+        padding-top: 70px;
+    }
+
+    .imageupload {
+        margin: 20px 0;
+    }
+
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-form" >
+    <form action="/upload" method="POST">
+        <h2 class="text-center">Upload image</h2>
+         <div class="form-group" style="text-align: center">
+            <label class="btn btn-default btn-file" >Browse File
+                <input type="file" style="display: none;" name="file">
+            </label>
+        </div>
+        <div class="form-group">
+            <label for="title"></label>
+            <input type="text" class="form-control" placeholder="Title" required="required" name="title">
+        </div>
+        <div class="form-group">
+            <label for="tag"></label>
+            <input type="text" class="form-control" placeholder="Tag (separate by comma)" required="required" name="tag">
+        </div>
+        <div class="form-group">
+            <label for="description"></label>
+            <textarea class="form-control" placeholder="Description" required="" name="description" rows="5" style="max-width: 100%" maxlength="160"></textarea>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">Submit</button>
+        </div>
+    </form>
+
+</div>
+{% endblock %}
+
+
+
+-------------------------------------------------------------------------------
+Database Queries (Joshua)
+-------------------------------------------------------------------------------
+
+    def get_user(cursor, username):
+
+        return cursor.execute("select * from user u where u.username = ?;", username)
+
+    def create_user(firstname, lastname, username, password, contributor, downloads, cursor):
+
+        if not get_user(cursor, username):
+
+            cursor.execute(
+                "INSERT INTO user(firstname, lastName, username, password, contributor, downloads) "
+                "VALUES (?,?,?,?,?,?);",(firstname, lastname, username, username, password, contributor, downloads))
+
+            print('Added {}'.format(username))
+
+        else:
+            print('{} already exists'.format(username))
+
+    def get_image(cursor, filename, userid):
+
+        return cursor.execute("select * from image i where i.filename = ? and i.userid = ?;", (filename, userid))
+
+    def insert_image(id, title, userid, rating, description, filename, public, cursor):
+
+        if not get_image(cursor, filename, userid):
+
+            cursor.execute("insert into image(id, title, userid, rating, description, filename, public) "
+                           "values (?,?,?,?,?,?,?);", (id, title, userid, rating, description, filename, public))
+
+    def get_image_by_tag(cursor, tag):
+
+        return cursor.execute("select * from image i tag t where i.id = t.imageID and t.tag = ?;"(tag))
+
+    def set_image_tag(cursor, tagid, imageid, tag):
+
+        cursor.execute("insert into tag(id, imageID, tag) values (?,?,?);" (tagid, imageid, tag))
+
+    def get_username(cursor, user_id):
+
+        return cursor.execute("select u.username from user u where u.id = ?;", (user_id))
+
+    def get_firstname(cursor, user_id):
+
+        return cursor.execute("select u.firstName from user u where u.id = ?;", (user_id))
+
+    def get_lastname(cursor, user_id):
+
+        return cursor.execute("select u.lastName from user u where u.id = ?;",(user_id))
+
+    def get_password(cursor, user_id):
+
+        return cursor.execute("select u.password from user u where u.id = ?;", (user_id))
+
+    def get_image_title(cursor, image_id):
+
+        return cursor.execute("select i.username from image i where i.id = ?;", (image_id))
+
+    def get_rating(cursor, image_id):
+
+        return cursor.execute("select i.rating from user i where i.id = ?;", (image_id))
+
+    def set_rating(cursor, image_rate, image_id):
+
+        cursor.execute("update image set rating = ? where id = ?;", (image_rate, image_id))
+
+    def get_description(cursor, image_id):
+
+        return cursor.execute("select i.description from image i where i.id = ?;", (image_id))
+
+    def is_public(cursor, image_id):
+
+        return cursor.execute("select i.public from image i where i.id = ?;", image_id)
+
+    def update_public(cursor, image_id, public):
+
+        cursor.execute("update image set public = ? where i.id = ?;", (public, image_id))
+
+    def get_tags(cursor, image_id):
+
+        return cursor.execute("select t.tag from tag t where t.imageID = ?;", image_id)
+
+    def is_contributor(cursor, user_id):
+
+        return cursor.execute("select u.contributor from user u where u.id = ?;", user_id)
+
+    def update_contributor(cursor, user_id, contributes):
+
+        cursor.execute("update user set contributor = ? where u.id = ?;", (contributes, user_id))
+
+    def get_download_count(cursor, user_id):
+
+        return cursor.execute("select u.downloads from user u where u.id = ?;", user_id)
+
+    def update_download_count(cursor, user_id):
+
+        cursor.execute("update user set downloads = ? "
+                              "where id = ?", (get_download_count(cursor, user_id) + 1, user_id))
+
+    def get_comment(cursor, comment_id):
+
+        return cursor.execute("select * from comment c where c.id = ?;", comment_id)
+
+    def get_image_comments(cursor, image_id):
+
+        return cursor.execute("select * from comment c where c.imageID = ?;", image_id)
+    
+    def add_comment(cursor, comment_id, user_id, image_id):
+
+        if not get_comment(cursor, comment_id):
+
+            cursor.execute("insert into comment (id, userID, imageID) values(?,?,?);", (comment_id, user_id, image_id))
+
+				
+				
+				
+------------------------------------------------------------------------------------			
+Dashboard HTML CSS (Tim)
+---------------------------------------------------------------------------------
+
+<!--
+<style>
+.navbar{
+margin-bottom: 0;
+border-radius: 0;
+}
+.vertical-center{
+min-height: 100%;
+min-height: 450px;
+
+display: flex;
+align-items: center;
+}
+.footer{
+position: fixed;
+left: 0;
+bottom: 0;
+width: 100%;
+background-color:rgb(29,29,29);
+color:white;
+text-align: center;
+
+}
+.jumbotron-fluid{
+background-image: url("galaxies.jpg");
+background-size: cover;
+}
+
+#search-button{
+height: 30;
+border-radius: 50%;
+
+}
+#search-bar{
+height: 30;
+}
+</style> -->

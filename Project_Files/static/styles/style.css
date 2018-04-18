@@ -14,6 +14,29 @@ body {
   }
 }
 
+#overlay {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(100,100,100,0.7);
+    cursor: pointer;
+}
+
+#overlay-inner {
+    position: absolute;
+    display: none;
+    top: 50%;
+    left: 50%;
+    background-color: white;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%,-50%);
+}
+
 .carousel-item {
   height: 65vh;
   min-height: 300px;
@@ -687,6 +710,5 @@ border-left-color: #2dcb73;
 .status-upload form button > i {
 margin-right: 7px;
 }
-
 
 </style>

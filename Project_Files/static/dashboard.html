@@ -1,144 +1,106 @@
-<!DOCTYPE>
-<html lang = "en">
+<!DOCTYPE html>
+<html lang="en">
+
     <head>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>Dashboard Page</title>
+        <title>The Looking Glass - Dashboard</title>
+
+        <!-- Link Bootstrap and CSS -->
         <link href="{{url_for('static', filename='styles/style.css')}}" rel="stylesheet">
         <link href="{{url_for('static', filename='styles/bootstrap.min.css')}}" type="text/css" rel="stylesheet">
-        <!--
-<style>
-           .navbar{
-               margin-bottom: 0;
-               border-radius: 0;
-           }
-           .vertical-center{
-               min-height: 100%;
-               min-height: 450px;
-
-               display: flex;
-               align-items: center;
-           }
-           .footer{
-               position: fixed;
-               left: 0;
-               bottom: 0;
-               width: 100%;
-               background-color:rgb(29,29,29);
-               color:white;
-               text-align: center;
-
-           }
-           .jumbotron-fluid{
-               background-image: url("galaxies.jpg");
-               background-size: cover;
-           }
-
-           #search-button{
-               height: 30;
-               border-radius: 50%;
-
-           }
-           #search-bar{
-               height: 30;
-           }
-        </style> -->
     </head>
 
-        <body>
-
-          <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <body>
+        <!-- Navigation section -->
+        <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
             <div class="container">
-              <a href="#" class="navbar-left"><img src="/static/PICTURES/logo_White.png"></a>
-
-
-                          <a class="navbar-left" href="#">Home</a>
-
-
-
-                          <div class="dropdown">
-                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" href="#">{{user}}
-                                        <span class="caret"></span></button>
-                                        <ul class="dropdown-menu">
-                                          <li><a href="#">Your Homepage</a></li>
-                                          <li><a href="http://localhost:5000/upload">Upload Photos</a></li>
-                                          <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
-                                        </ul>
-                          </div>
-              </div>
-            </nav>
-
-            <div class="jumbotron jumbotron-fluid vertical-center">
-                <div class="container">
-                        <div class="text-center">
-                                <br>
-                                 <div class="search-container">
-                                         <input type="text" placeholder="Search..." name="search" size="60" id="search-bar">
-                                         <button type="submit" id="search-button"><i class="fa fa-search"></i></button>
-                                 </div>
-                         </div>
-                        </div>
+                <a href="#" class="navbar-left"><img src="/static/PICTURES/logo_White.png"></a>
+                <a class="navbar-left" href="#">Home</a>
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" href="#">{{user}}
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Your Homepage</a></li>
+                        <li><a href="/Upload">Upload Photos</a></li>
+                        <li><a href="/Logout"><span class="glyphicon glyphicon-log-in"></span>Logout</a></li>
+                    </ul>
                 </div>
-             </div>
-             <div class="container">
-            <h1 class="text-center"> Welcome to The Looking Glass! </h1>
+            </div>
+            <!-- /.container -->
+        </nav>
 
+        <!-- Page Content -->
+        <div class="jumbotron jumbotron-fluid vertical-center">
+            <div class="container">
+                <div class="text-center">
+                    <br>
+                    <div class="search-container">
+                        <input type="text" placeholder="Search..." name="search" size="60" id="search-bar">
+                        <button type="submit" id="search-button"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+            <!-- /.container -->
+        </div>
+        <!-- /.jumbotron -->
 
+        <div class="container">
+            <h1 class="text-center">Welcome to The Looking Glass!</h1>
             <div class="row">
-                    <div class="col-lg-4">
-                      <div class="card text-center">
+                <div class="col-lg-4">
+                    <div class="card text-center">
                         <h4 class="card-header">Your Homepage</h4>
                         <div class="card-body">
-                          <p class="card-text">Your Homepage is where you keep all of your photos.</p>
+                            <p class="card-text">Your Homepage is where you keep all of your photos.</p>
                         </div>
                         <div class="card-footer">
-                          <a href="#" class="btn btn-primary">Go to your Homepage</a>
+                            <a href="#" class="btn btn-primary">Go to your Homepage</a>
                         </div>
-                      </div>
-                    </div>
-
-                    <div class="col-lg-4">
-                      <div class="card text-center">
-                        <h4 class="card-header">Upload Photos</h4>
-                        <div class="card-body">
-                          <p class="card-text">Share your unique photographs with the Looking Glass community.</p>
-                        </div>
-                        <div class="card-footer text-center">
-                          <a href="http://localhost:5000/upload" class="btn btn-primary">Upload</a>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-lg-4">
-                      <div class="card text-center">
-                        <h4 class="card-header">Popular</h4>
-                        <div class="card-body">
-                          <p class="card-text">See what photos people are ranting and raving about!</p>
-                        </div>
-                        <div class="card-footer">
-                          <a href="http://localhost:5000/popular" class="btn btn-primary">View Photos</a>
-                        </div>
-                      </div>
                     </div>
                 </div>
-                <p>            </p>
-                <p>           </p>
-                <p>            </p>
-              </div>
-                <footer class="py-5 bg-dark">
-                  <div class="container">
-                    <p class="m-0 text-center text-white">Copyright &copy; The Looking Glass 2018</p>
-                  </div>
-                  <!-- /.container -->
-                </footer>
+                <div class="col-lg-4">
+                    <div class="card text-center">
+                        <h4 class="card-header">Upload Photos</h4>
+                        <div class="card-body">
+                            <p class="card-text">Share your unique photographs with the Looking Glass community.</p>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="/Upload" class="btn btn-primary">Upload</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card text-center">
+                        <h4 class="card-header">Popular</h4>
+                        <div class="card-body">
+                            <p class="card-text">See what photos people are ranting and raving about!</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="/PopularPhotos" class="btn btn-primary">View Photos</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container -->
 
-                <!-- Bootstrap core JavaScript -->
-                <script src="{{url_for('static', filename='js/jquery-3.3.1.min.js')}}"></script>
-                <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+        <!-- Footer -->
+        <footer class="py-5 bg-dark">
+            <div class="container">
+                <p class="m-0 text-center text-white">Copyright &copy; The Looking Glass 2018</p>
+            </div>
+            <!-- /.container -->
+        </footer>
 
-              </body>
-
-            </html>
+        <!-- Bootstrap core JavaScript -->
+        <script src="{{url_for('static', filename='js/jquery-3.3.1.min.js')}}"></script>
+        <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+    </body>
+</html>

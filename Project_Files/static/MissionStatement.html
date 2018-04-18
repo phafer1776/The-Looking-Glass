@@ -1,95 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>The Looking Glass - Mission Statement</title>
 
-    <title>The Looking Glass</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="{{url_for('static', filename='styles/style.css')}}" rel="stylesheet">
-    <link href="{{url_for('static', filename='styles/bootstrap.min.css')}}" type="text/css" rel="stylesheet">
-
-    <!-- Custom styles for this template -->
-
-
-
+        <!-- Link Bootstrap and CSS -->
+        <link href="{{url_for('static', filename='styles/style.css')}}" rel="stylesheet">
+        <link href="{{url_for('static', filename='styles/bootstrap.min.css')}}" type="text/css" rel="stylesheet">
     </head>
 
     <body>
-      <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container">
-          <a href="#" class="navbar-left"><img src="/static/PICTURES/logo_White.png"></a>
-          <!--<a class="navbar-brand" href="index.html">The Looking Glass</a> -->
+        <!-- Navigation section -->
+        <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
+            <div class="container">
+                <a href="/" class="navbar-left"><img src="/static/PICTURES/logo_White.png"></a>
+                <!--<a class="navbar-brand" href="index.html">The Looking Glass</a> -->
+                <a class="navbar-left" href="/Signup">Sign Up</a>
+            </div>
+            <!-- /.container -->
+        </nav>
 
-          <a class="navbar-left" href="/signin">Signup/Login</a>
+        <!-- Page Content -->
+        <div class="row">
+            <div id="missionpic" class="col-lg-6">
+                <img class="img-fluid rounded mb-4" src="/static/PICTURES/mission.jpeg" alt="">
+            </div>
 
-
-          </div>
-
-      </nav>
-      <div class="row">
-        <div id="missionpic"class="col-lg-6">
-          <img class="img-fluid rounded mb-4" src="/static/PICTURES/mission.jpeg" alt="">
+            <div class="col-lg-6">
+                <h2 class="text-center" id="mission-header"><strong>Our Mission</strong></h2>
+                <p id="mission">
+                    The Looking Glass is a user-driven, open-source community that allows people from all
+                    over the world to share their unique photographs with one another. From professional photographers
+                    to amateurs to people who just believe they’ve taken a good picture, The Looking Glass is open to
+                    anyone who wants to share their work with the world!
+                </p>
+                <p>
+                    Our mission is simple: Connect people who connect with art. A picture is worth a thousand words,
+                    so we like to think that our website is more of a dictionary. So Join, Contribute, and Download!
+                    We are excited for you to experience a new world through our Looking Glass.
+                </p>
+            </div>
         </div>
+        <!-- /.row -->
 
-        <div class="col-lg-6">
-          <h2 class="text-center" id="mission-header"><strong>Our Mission</strong></h2>
-          <p id="mission">The Looking Glass is a user-driven, open-source community that allows people from all over the world to share their unique
-          photographs with one another. From professional photographers to amateurs to people who just believe they’ve taken a good picture,
-          The Looking Glass is open to anyone who wants to share their work with the world!</p>
-
-          <p >Our mission is simple: Connect people who connect with
-          art. A picture is worth a thousand words, so we like to think our website is more of a dictionary. So Join, Contribute, and Download! We are
-          excited for you to experience a new world through our Looking Glass.</p>
+        <!-- Gallery section -->
+        <div class="gallery">
+            <figure>
+                <img src="static/PICTURES/index-4.jpg" alt="" />
+                <figcaption>Daytona Beach <small>United States</small></figcaption>
+            </figure>
+            <figure>
+                <img src="static/PICTURES/index-5.jpg" alt="" />
+                <figcaption>Териберка, gorod Severomorsk <small>Russia</small></figcaption>
+            </figure>
+            <figure>
+                <img src="static/PICTURES/index-6.jpg" alt="" />
+                <figcaption>Bad Pyrmont <small>Deutschland</small></figcaption>
+            </figure>
+            <figure>
+                <img src="static/PICTURES/index-7.jpg" alt="" />
+                <figcaption>Yellowstoxne National Park <small>United States</small></figcaption>
+            </figure>
+            <figure>
+                <img src="static/PICTURES/index-8.jpg" alt="" />
+                <figcaption>Quiraing, Portree <small>United Kingdom</small></figcaption>
+            </figure>
+            <figure>
+                <img src="static/PICTURES/index-9.jpg" alt="" />
+                <figcaption>Highlands <small>United States</small></figcaption>
+            </figure>
         </div>
+        <!-- /.gallery -->
 
-</div>
+        <!-- Footer -->
+        <footer class="py-5 bg-dark">
+            <div class="container">
+                <p class="m-0 text-center text-white">Copyright &copy; The Looking Glass 2018</p>
+            </div>
+            <!-- /.container -->
+        </footer>
 
-<div class="gallery">
-  <figure>
-    <img src="static/PICTURES/index-4.jpg" alt="" />
-    <figcaption>Daytona Beach <small>United States</small></figcaption>
-  </figure>
-  <figure>
-    <img src="static/PICTURES/index-5.jpg" alt="" />
-    <figcaption>Териберка, gorod Severomorsk <small>Russia</small></figcaption>
-  </figure>
-  <figure>
-    <img src="static/PICTURES/index-6.jpg" alt="" />
-    <figcaption>
-      Bad Pyrmont <small>Deutschland</small>
-    </figcaption>
-  </figure>
-  <figure>
-    <img src="static/PICTURES/index-7.jpg" alt="" />
-    <figcaption>Yellowstoxne National Park <small>United States</small></figcaption>
-  </figure>
-  <figure>
-    <img src="static/PICTURES/index-8.jpg" alt="" />
-    <figcaption>Quiraing, Portree <small>United Kingdom</small></figcaption>
-  </figure>
-  <figure>
-    <img src="static/PICTURES/index-9.jpg" alt="" />
-    <figcaption>Highlands <small>United States</small></figcaption>
-  </figure>
-
-</div>
-<footer class="py-5 bg-dark">
-  <div class="container">
-    <p class="m-0 text-center text-white">Copyright &copy; The Looking Glass 2018</p>
-  </div>
-  <!-- /.container -->
-</footer>
-
-<!-- Bootstrap core JavaScript -->
-<script src="{{url_for('static', filename='js/jquery-3.3.1.min.js')}}"></script>
-<script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
-
-</body>
-
+        <!-- Bootstrap core JavaScript -->
+        <script src="{{url_for('static', filename='js/jquery-3.3.1.min.js')}}"></script>
+        <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+    </body>
 </html>

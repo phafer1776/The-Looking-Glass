@@ -1,96 +1,113 @@
-from flask import Flask, request, Response, json, jsonify, render_template, redirect, url_for
+from flask import Flask, request, Response, json, jsonify, render_template, redirect, url_for, session
 import sqlite3 as sql
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__, template_folder='static')
 app.config['DEBUG'] = True
+
+# Do we need this line???
 app.config['SECRET_KEY'] = 'Something hard to guess!'
+
 
 @app.route('/')
 def home():
     return render_template('/index.html')
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        try:
-            _username = request.form['username']
-            _password = request.form['password']
-            con = sql.connect('looking_glass.db')
-            cur = con.cursor()
-            cur.execute("SELECT password FROM user WHERE username = '{}';".format(_username))
-            if _password == cur.fetchone()[0]:
-               return "<h1> should re direct to dashboard"
+
+@app.route('/Login', methods=['POST'])
+def login_user():
+    try:
+        username = request.form['username']
+        password = request.form['password']
+        con = connect('looking_glass.db')
+        cur = con.cursor()
+        cur.execute("""SELECT * FROM user WHERE username=?""", (username,))
+        row = cur.fetchone()
+        cur.close()
+        con.close()
+        print(row)
+        if row:
+            # Compare username and password to those values in the DB
+            if username == row[0][3] and check_password_hash(str(row[0][4]), password):
+                session['user_id'] = row[0][0]
+                return load_dashboard_page(row[0][0])
             else:
-                return redirect(url_for('login'))
-        except:
-            return redirect(url_for('signup'))
-        finally:
-            con.close()
-    return render_template('login.html')
+                print('Show Error Page!!!!!')
+    except Exception as e:
+        print(e)
 
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    if request.method == 'POST':
-        try:
-            _firstname = request.form['firstname']
-            _lastname = request.form['lastname']
-            _username = request.form['username']
-            _password = request.form['password']
-            _re_password = request.form['re_password']
-            if _password == _re_password:      
-                con = sql.connect('looking_glass.db')
-                cur = con.cursor()
-                cur.execute("INSERT INTO user(firstname, lastName, username, password, contributor, downloads)"
-                    "VALUES (?,?,?,?,?,?);",(_firstname, _lastname, _username, _password, False, 0))
-                con.commit()
-                return redirect(url_for('login'))
-            else:
-                render_template('signup.html')
-        except:
-            con.rollback()
-            return redirect(url_for('signup'))
-        finally:
-            con.close()
-    return render_template('signup.html')
-
-@app.route('/upload')
-def upload():
-
-    if request.method == 'POST':
-        try:
-            pass # store the images
-        except:
-            pass # maybe tell user somethin went wrong
-        finally:
-            pass
-    return render_template('upload.html')
+#
+# @app.route('/Signup')
+# def show_signup_overlay():
+#     return render_template('SignUp.html')
 
 
-@app.route('/popular')
-def popular():
+@app.route('/SignupUser')
+def register_user():
+    first_name = request.form['firstName']
+    last_name = request.form['lastName']
+    username = request.form['username']
+    password = generate_password_hash(request.form['password'])
+    con = connect('looking_glass.db')
+    cur = con.cursor()
+    try:
+        cur.execute("""INSERT INTO user(firstName, lastName, username, password, contributor, downloads) VALUES """
+                    """(?,?,?,?,?,?)""", (first_name, last_name, username, password, False, 0))
+        con.commit()
+        cur.close()
+        con.close()
+    except Exception as e:
+        print(e)
+    return render_template('/')
+
+
+@app.route('/Logout')
+def logout_user():
+    session.pop('user_id', None)
+    return render_template('/')
+
+
+@app.route('/Upload')
+def upload_photo():
+    pass
+
+
+@app.route('/PopularPhotos')
+def load_popular_photos_page():
     return render_template('/Popular.html')
 
-@app.route('/private')
-def private():
+
+@app.route('/PrivateGallery')
+def load_private_photos_page():
     return render_template('/Private.html')
 
-@app.route('/photo')
-def load_photo_page():
-    return render_template('/singlephoto.html')
 
-@app.route('/mission')
-def mission_statement():
+@app.route('/Photo/<int:image_id>', methods=['GET'])
+def load_single_photo_page(image_id):
+    # Get the image file name from the db, and load it into the html iFrame.
+    return render_template('/SinglePhoto.html')
+
+
+@app.route('/MissionStatement')
+def load_mission_statement_page():
     return render_template('/MissionStatement.html')
 
 
-@app.route('/dashboard/<int:uid>', methods=['GET', 'POST'])
-def dashboard(uid):
+# This route is temporary.
+@app.route('/Dashboard')
+def basic_dashboard():
+    return render_template('/Dashboard.html')
+
+
+@app.route('/Dashboard/<int:uid>', methods=['GET', 'POST'])
+def load_dashboard_page(uid):
     con = connect('looking_glass.db')
     cur = con.cursor()
-    return render_template('/dashboard.html', user=cur.execute("""SELECT username FROM user WHERE id = ?""",
+    return render_template('/Dashboard.html', user=cur.execute("""SELECT username FROM user WHERE id = ?""",
                                                                (uid,)).fetchone()[0])
 
 
+# This route is only for DB testing, and will be removed before it is submitted
 @app.route('/db')
 def db_work():
     """
@@ -123,123 +140,13 @@ def db_work():
                 'imageID integer, rating integer, FOREIGN KEY (userID) REFERENCES user (id), '
                 'FOREIGN KEY (imageID) REFERENCES image (id))')
 
+    # EXAMPLE EXECUTION OF QUERY
+    #
     # cur.execute("""INSERT INTO user(firstName, lastName, username, password, contributor, downloads) VALUES
     # (?,?,?,?,?,?);""", ('Billy', 'Idol', 'theBman', 'password', True, 5))
     # print('Added')
     # cur.execute('SELECT * FROM user')
     # print(cur.fetchall())
-
-    def get_user(cursor, username):
-
-        return cursor.execute("select * from user u where u.username = ?;", username)
-
-    def create_user(firstname, lastname, username, password, contributor, downloads, cursor):
-
-        if not get_user(cursor, username):
-
-            cursor.execute(
-                "INSERT INTO user(firstname, lastName, username, password, contributor, downloads) "
-                "VALUES (?,?,?,?,?,?);",(firstname, lastname, username, username, password, contributor, downloads))
-
-            print('Added {}'.format(username))
-
-        else:
-            print('{} already exists'.format(username))
-
-    def get_image(cursor, filename, userid):
-
-        return cursor.execute("select * from image i where i.filename = ? and i.userid = ?;", (filename, userid))
-
-    def insert_image(id, title, userid, rating, description, filename, public, cursor):
-
-        if not get_image(cursor, filename, userid):
-
-            cursor.execute("insert into image(id, title, userid, rating, description, filename, public) "
-                           "values (?,?,?,?,?,?,?);", (id, title, userid, rating, description, filename, public))
-
-    def get_image_by_tag(cursor, tag):
-
-        return cursor.execute("select * from image i tag t where i.id = t.imageID and t.tag = ?;"(tag))
-
-    def set_image_tag(cursor, tagid, imageid, tag):
-
-        cursor.execute("insert into tag(id, imageID, tag) values (?,?,?);" (tagid, imageid, tag))
-
-    def get_username(cursor, user_id):
-
-        return cursor.execute("select u.username from user u where u.id = ?;", (user_id))
-
-    def get_firstname(cursor, user_id):
-
-        return cursor.execute("select u.firstName from user u where u.id = ?;", (user_id))
-
-    def get_lastname(cursor, user_id):
-
-        return cursor.execute("select u.lastName from user u where u.id = ?;",(user_id))
-
-    def get_password(cursor, user_id):
-
-        return cursor.execute("select u.password from user u where u.id = ?;", (user_id))
-
-    def get_image_title(cursor, image_id):
-
-        return cursor.execute("select i.username from image i where i.id = ?;", (image_id))
-
-    def get_rating(cursor, image_id):
-
-        return cursor.execute("select i.rating from user i where i.id = ?;", (image_id))
-
-    def set_rating(cursor, image_rate, image_id):
-
-        cursor.execute("update image set rating = ? where id = ?;", (image_rate, image_id))
-
-    def get_description(cursor, image_id):
-
-        return cursor.execute("select i.description from image i where i.id = ?;", (image_id))
-
-    def is_public(cursor, image_id):
-
-        return cursor.execute("select i.public from image i where i.id = ?;", image_id)
-
-    def update_public(cursor, image_id, public):
-
-        cursor.execute("update image set public = ? where i.id = ?;", (public, image_id))
-
-    def get_tags(cursor, image_id):
-
-        return cursor.execute("select t.tag from tag t where t.imageID = ?;", image_id)
-
-    def is_contributor(cursor, user_id):
-
-        return cursor.execute("select u.contributor from user u where u.id = ?;", user_id)
-
-    def update_contributor(cursor, user_id, contributes):
-
-        cursor.execute("update user set contributor = ? where u.id = ?;", (contributes, user_id))
-
-    def get_download_count(cursor, user_id):
-
-        return cursor.execute("select u.downloads from user u where u.id = ?;", user_id)
-
-    def update_download_count(cursor, user_id):
-
-        cursor.execute("update user set downloads = ? "
-                              "where id = ?", (get_download_count(cursor, user_id) + 1, user_id))
-
-    def get_comment(cursor, comment_id):
-
-        return cursor.execute("select * from comment c where c.id = ?;", comment_id)
-
-    def get_image_comments(cursor, image_id):
-
-        return cursor.execute("select * from comment c where c.imageID = ?;", image_id)
-    
-    def add_comment(cursor, comment_id, user_id, image_id):
-
-        if not get_comment(cursor, comment_id):
-
-            cursor.execute("insert into comment (id, userID, imageID) values(?,?,?);", (comment_id, user_id, image_id))
-
 
     con.commit()
 
