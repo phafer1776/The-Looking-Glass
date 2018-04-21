@@ -28,11 +28,21 @@ def login_user():
         print(row)
         if row:
             # Compare username and password to those values in the DB
-            if username == row[0][3] and check_password_hash(str(row[0][4]), password):
-                session['user_id'] = row[0][0]
-                return load_dashboard_page(row[0][0])
+            if username == row[3] and check_password_hash(str(row[4]), password):
+                session['user_id'] = row[0]
+                return jsonify({
+                    'authenticated': True,
+                    'user': {
+                        'username': username,
+                        'firstName': row[1],
+                        'lastName': row[2],
+                    }
+                })
+                # return load_dashboard_page(row[0])
             else:
-                print('Show Error Page!!!!!')
+                return jsonify({
+                    'authenticated': False
+                })
     except Exception as e:
         print(e)
 
@@ -42,23 +52,31 @@ def login_user():
 #     return render_template('SignUp.html')
 
 
-@app.route('/SignupUser')
+@app.route('/SignupUser', methods=['POST'])
 def register_user():
     first_name = request.form['firstName']
     last_name = request.form['lastName']
     username = request.form['username']
     password = generate_password_hash(request.form['password'])
+    confirmed_password = generate_password_hash(request.form['passwordConfirmed'])
     con = connect('looking_glass.db')
     cur = con.cursor()
     try:
-        cur.execute("""INSERT INTO user(firstName, lastName, username, password, contributor, downloads) VALUES """
-                    """(?,?,?,?,?,?)""", (first_name, last_name, username, password, False, 0))
-        con.commit()
+        # Check if username is already taken.
+        cur.execute("""SELECT * FROM user WHERE username = """ + username + """;""")
+        duplicate_user = cur.fetchone()
+        print('Username {} has already been taken. Please choose a different one'.format(duplicate_user))
+        if not duplicate_user and password == confirmed_password:
+            cur.execute("""INSERT INTO user(firstName, lastName, username, password, contributor, downloads) VALUES """
+                        """(?,?,?,?,?,?)""", (first_name, last_name, username, password, False, 0))
+            con.commit()
         cur.close()
         con.close()
+        return jsonify({
+            'registered': True
+        })
     except Exception as e:
         print(e)
-    return render_template('/')
 
 
 @app.route('/Logout')

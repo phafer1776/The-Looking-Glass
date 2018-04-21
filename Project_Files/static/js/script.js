@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $('#signup-link').on('click', function () {
+    $('#signup-link').on('click', function() {
         document.getElementById("overlay").style.display = "block";
         document.getElementById("overlay-inner").style.display = "block"
     });
@@ -10,7 +10,7 @@ $(document).ready(function() {
             type: 'POST',
             success: function(response) {
                 console.log(response);
-                if (response.authentication === true) {
+                if (response.authenticated === true) {
                     localStorage.setItem('userdata', JSON.stringify(response.user));
                     populateUser();
                 }
@@ -18,21 +18,30 @@ $(document).ready(function() {
                     $('#errorMessageLogin').text('Incorrect login information.');
                 }
             },
-            error: function (error) {
+            error: function(error) {
                 console.log(error);
             }
         });
     });
-
-    // function show_overlay() {
-    //     document.getElementById("overlay").style.display = "block";
-    //     document.getElementById("overlay-inner").style.display = "block"
-    // }
-    //
-    // function hide_overlay() {
-    //     document.getElementById("overlay").style.display = "none";
-    // }
-
+    $('signup-button').on('click', function() {
+        $.ajax({
+            url: '/SignupUser',
+            data: $('#form-signup').serialize(),
+            type: 'POST',
+            success: function(response) {
+                console.log(response);
+                if (response.registered === true) {
+                    $('#errorMessageSignup').text('Signup successful!');
+                }
+                else {
+                    $('#errorMessageSignup').text('Error! Please try again.');
+                }
+            },
+            error: function(error) {
+                console.log(error)
+            }
+        });
+    });
     function populateUser() {
         var user = JSON.parse(localStorage.getItem('userdata'));
         console.log(user);
