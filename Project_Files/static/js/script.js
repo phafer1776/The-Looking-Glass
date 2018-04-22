@@ -1,5 +1,6 @@
 $(document).ready(function() {
-    $('#signup-link').on('click', function() {
+    // Show the Login / Sign Up overlay.
+    $('.signup-link').on('click', function() {
         document.getElementById("overlay").style.display = "inline";
         document.getElementById("overlay-inner").style.display = "inline";
     });
@@ -44,6 +45,15 @@ $(document).ready(function() {
                 console.log(error)
             }
         });
+    });
+
+    // Hide the Login / Sign Up overlay when clicked outside of inner section.
+    $(document).mouseup(function(e) {
+        var inner = $('#overlay-inner');
+        if (e.target.id != inner.attr('id') && !inner.has(e.target).length) {
+            inner.fadeOut();
+            $('#overlay').fadeOut();
+        }
     });
     function populateUser() {
         var user = JSON.parse(localStorage.getItem('userdata'));

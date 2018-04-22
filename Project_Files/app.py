@@ -1,9 +1,16 @@
-from flask import Flask, request, Response, json, jsonify, render_template, redirect, url_for, session
+import os
+from flask import Flask, request, Response, json, jsonify, render_template, redirect, url_for, session, \
+    send_from_directory
 import sqlite3 as sql
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = './static/uploads'
+ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'png', 'tga', 'tiff', 'gif'])
 
 app = Flask(__name__, template_folder='static')
 app.config['DEBUG'] = True
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Do we need this line???
 app.config['SECRET_KEY'] = 'Something hard to guess!'
@@ -39,7 +46,6 @@ def login_user():
                         'lastName': row[2],
                     }
                 })
-                # return load_dashboard_page(row[0])
             else:
                 redirect('/Dashboard')
                 return jsonify({
@@ -47,11 +53,6 @@ def login_user():
                 })
     except Exception as e:
         print(e)
-
-#
-# @app.route('/Signup')
-# def show_signup_overlay():
-#     return render_template('SignUp.html')
 
 
 @app.route('/SignupUser', methods=['POST'])
@@ -66,13 +67,6 @@ def register_user():
     con = connect('looking_glass.db')
     cur = con.cursor()
     try:
-    #     # Check if username is already taken.
-    #     cur.execute("""SELECT * FROM user WHERE username = """ + username + """;""")
-    #     duplicate_user = cur.fetchone()
-    #     print(duplicate_user)
-    # except Exception as e:
-    #     print(e)
-        # print('Username {} has already been taken. Please choose a different one'.format(duplicate_user))
         cur.execute("""INSERT INTO user(firstName, lastName, username, password, contributor, downloads) VALUES """
                     """(?,?,?,?,?,?)""", (first_name, last_name, username, password, False, 0))
         con.commit()
@@ -91,9 +85,34 @@ def logout_user():
     return render_template('/')
 
 
-@app.route('/Upload')
+@app.route('/UploadPhoto')
+def show_upload_page():
+    return render_template('/Upload.html')
+
+
+@app.route('/Upload', methods=['GET', 'POST'])
 def upload_photo():
-    pass
+    try:
+        if request.method == 'POST':
+            if 'photo_file' not in request.files:
+                print('No file part')
+                return redirect(request.url)
+            file = request.files['photo_file']
+            if file.filename == '':
+                print('No file chosen')
+                return redirect(request.url)
+            if file and file_allowed(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                return redirect(url_for('uploaded_photo', filename=filename))
+        return
+    except Exception as e:
+        print(e)
+
+
+@app.route('/Uploads/<filename>')
+def uploaded_photo(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
 @app.route('/PopularPhotos')
@@ -187,6 +206,10 @@ def connect(db_filename):
         return sql.connect(db_filename, timeout=10)
     except Exception as e:
         print(e)
+
+
+def file_allowed(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 if __name__ == '__main__':
