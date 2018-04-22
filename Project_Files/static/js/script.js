@@ -1,16 +1,17 @@
 $(document).ready(function() {
     $('#signup-link').on('click', function() {
-        document.getElementById("overlay").style.display = "block";
-        document.getElementById("overlay-inner").style.display = "block"
+        document.getElementById("overlay").style.display = "inline";
+        document.getElementById("overlay-inner").style.display = "inline";
     });
     $('#login-button').on('click', function() {
         $.ajax({
-            url: '/Login',
+            url: '../../Login',
             data: $('#form-login').serialize(),
             type: 'POST',
             success: function(response) {
                 console.log(response);
                 if (response.authenticated === true) {
+                    location = '../../Dashboard';
                     localStorage.setItem('userdata', JSON.stringify(response.user));
                     populateUser();
                 }
@@ -23,14 +24,16 @@ $(document).ready(function() {
             }
         });
     });
-    $('signup-button').on('click', function() {
+    $('#signup-button').on('click', function() {
         $.ajax({
-            url: '/SignupUser',
+            url: '../../SignupUser',
             data: $('#form-signup').serialize(),
             type: 'POST',
             success: function(response) {
                 console.log(response);
                 if (response.registered === true) {
+                    document.getElementById("overlay").style.display = "none";
+                    document.getElementById("overlay-inner").style.display = "none";
                     $('#errorMessageSignup').text('Signup successful!');
                 }
                 else {

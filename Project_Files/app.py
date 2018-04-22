@@ -30,6 +30,7 @@ def login_user():
             # Compare username and password to those values in the DB
             if username == row[3] and check_password_hash(str(row[4]), password):
                 session['user_id'] = row[0]
+                # redirect('/Dashboard')
                 return jsonify({
                     'authenticated': True,
                     'user': {
@@ -40,6 +41,7 @@ def login_user():
                 })
                 # return load_dashboard_page(row[0])
             else:
+                redirect('/Dashboard')
                 return jsonify({
                     'authenticated': False
                 })
@@ -57,19 +59,23 @@ def register_user():
     first_name = request.form['firstName']
     last_name = request.form['lastName']
     username = request.form['username']
-    password = generate_password_hash(request.form['password'])
-    confirmed_password = generate_password_hash(request.form['passwordConfirmed'])
+    password = request.form['password']
+    confirmed_password = request.form['passwordConfirmed']
+    if password == confirmed_password:
+        password = generate_password_hash(password)
     con = connect('looking_glass.db')
     cur = con.cursor()
     try:
-        # Check if username is already taken.
-        cur.execute("""SELECT * FROM user WHERE username = """ + username + """;""")
-        duplicate_user = cur.fetchone()
-        print('Username {} has already been taken. Please choose a different one'.format(duplicate_user))
-        if not duplicate_user and password == confirmed_password:
-            cur.execute("""INSERT INTO user(firstName, lastName, username, password, contributor, downloads) VALUES """
-                        """(?,?,?,?,?,?)""", (first_name, last_name, username, password, False, 0))
-            con.commit()
+    #     # Check if username is already taken.
+    #     cur.execute("""SELECT * FROM user WHERE username = """ + username + """;""")
+    #     duplicate_user = cur.fetchone()
+    #     print(duplicate_user)
+    # except Exception as e:
+    #     print(e)
+        # print('Username {} has already been taken. Please choose a different one'.format(duplicate_user))
+        cur.execute("""INSERT INTO user(firstName, lastName, username, password, contributor, downloads) VALUES """
+                    """(?,?,?,?,?,?)""", (first_name, last_name, username, password, False, 0))
+        con.commit()
         cur.close()
         con.close()
         return jsonify({
