@@ -66,6 +66,11 @@ body {
     border-color: aqua;
 }
 
+.greeting {
+    color: #ffffff;
+    float: top;
+}
+
 .carousel-item {
     height: 65vh;
     min-height: 300px;
@@ -76,8 +81,13 @@ body {
     background-size: cover;
 }
 
-.jumbotron-fluid {
+#jumbotron-dashboard {
     background-image: url("/static/PICTURES/galaxies.jpg");
+    background-size: cover;
+}
+
+#jumbotron-upload {
+    background-image: url("/static/PICTURES/camera.jpg");
     background-size: cover;
 }
 
@@ -153,7 +163,6 @@ body {
     outline: #343a40;
     box-shadow: none;
     border: none;
-    background-color: #343a40;
 }
 
 .container>a>img {

@@ -33,7 +33,7 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li><a href="/Dashboard">Your Homepage</a></li>
-                        <li><a href="/Upload">Upload Photos</a></li>
+                        <li><a href="#">Upload Photos</a></li>
                         <li><a href="/Logout"><span class="glyphicon glyphicon-log-in"></span>Logout</a></li>
                     </ul>
                 </div>
@@ -42,23 +42,43 @@
         </nav>
 
         <!-- Page Content -->
+        <div class="jumbotron jumbotron-fluid vertical-center" id="jumbotron-upload">
+            <div class="container">
+                <div class="text-center">
+                    <br>
+                    <div class="search-container">
+                        <input type="text" placeholder="Search..." name="search" size="60" id="search-bar">
+                        <button type="submit" id="search-button"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+            <!-- /.container -->
+        </div>
+        <!-- /.jumbotron -->
+
+        <!-- Page Content -->
         <div class="container">
-            <!-- Page Heading/Breadcrumbs -->
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <h3>Your Private Photos</h3>
-                </li>
-            </ol>
+            <div class="text-center">
+                <h3>Add your photo to our collection.</h3>
+                <br>
+            </div>
+
         </div>
         <!-- /.container -->
-        <div class="container-fluid">
+        <div class="container">
             <div class="row">
-                <h3>Upload a photo</h3>
+                <h2>Upload a photo</h2>
+            </div>
+            <div class="row">
+                <p>We accept the following file formats: jpg, jpeg, png, tga, tiff, gif</p>
+            </div>
+            <div class="row">
                 <div class="col-md-6">
                     <form action="/Upload" method="post" enctype="multipart/form-data">
                         <input type="file" name="photo_file">
-                        <input type="submit" value="Upload">
+                        <input class="btn btn-primary" type="submit" value="Upload">
                     </form>
+                    <br><br>
                 </div>
             </div>
         </div>

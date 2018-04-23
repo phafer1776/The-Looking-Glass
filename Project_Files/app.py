@@ -11,8 +11,6 @@ ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'png', 'tga', 'tiff', 'gif'])
 app = Flask(__name__, template_folder='static')
 app.config['DEBUG'] = True
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-# Do we need this line???
 app.config['SECRET_KEY'] = 'Something hard to guess!'
 
 
@@ -21,7 +19,7 @@ def home():
     return render_template('/index.html')
 
 
-@app.route('/Login', methods=['POST'])
+@app.route('/Login', methods=['GET', 'POST'])
 def login_user():
     try:
         username = request.form['username']
@@ -37,8 +35,10 @@ def login_user():
             # Compare username and password to those values in the DB
             if username == row[3] and check_password_hash(str(row[4]), password):
                 session['user_id'] = row[0]
-                # redirect('/Dashboard')
-                return jsonify({
+                session['firstName'] = row[1]
+                session['username'] = username
+                print(session)
+                json_data = jsonify({
                     'authenticated': True,
                     'user': {
                         'username': username,
@@ -46,8 +46,11 @@ def login_user():
                         'lastName': row[2],
                     }
                 })
+                print(json_data)
+                return json_data
+                # return redirect('/Dashboard')
             else:
-                redirect('/Dashboard')
+                redirect('/')
                 return jsonify({
                     'authenticated': False
                 })
@@ -82,7 +85,9 @@ def register_user():
 @app.route('/Logout')
 def logout_user():
     session.pop('user_id', None)
-    return render_template('/')
+    session.pop('username', None)
+    session.pop('firstName', None)
+    return redirect('/')
 
 
 @app.route('/UploadPhoto')
@@ -136,18 +141,11 @@ def load_mission_statement_page():
     return render_template('/MissionStatement.html')
 
 
-# This route is temporary.
 @app.route('/Dashboard')
-def basic_dashboard():
-    return render_template('/Dashboard.html')
-
-
-@app.route('/Dashboard/<int:uid>', methods=['GET', 'POST'])
-def load_dashboard_page(uid):
-    con = connect('looking_glass.db')
-    cur = con.cursor()
-    return render_template('/Dashboard.html', user=cur.execute("""SELECT username FROM user WHERE id = ?""",
-                                                               (uid,)).fetchone()[0])
+def load_dashboard_page():
+    if 'username' in session:
+        first_name = session['firstName']
+        return render_template('/Dashboard.html', first_name=first_name)
 
 
 # This route is only for DB testing, and will be removed before it is submitted

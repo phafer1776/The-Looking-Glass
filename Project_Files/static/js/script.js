@@ -12,9 +12,9 @@ $(document).ready(function() {
             success: function(response) {
                 console.log(response);
                 if (response.authenticated === true) {
-                    location = '../../Dashboard';
                     localStorage.setItem('userdata', JSON.stringify(response.user));
                     populateUser();
+                    location = '../../Dashboard';
                 }
                 else {
                     $('#errorMessageLogin').text('Incorrect login information.');
@@ -58,6 +58,6 @@ $(document).ready(function() {
     function populateUser() {
         var user = JSON.parse(localStorage.getItem('userdata'));
         console.log(user);
-        $('#greeting').append(user.firstName);
+        $('.greeting').append(user.firstName);
     }
 });
