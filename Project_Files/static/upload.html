@@ -66,20 +66,36 @@
         </div>
         <!-- /.container -->
         <div class="container">
-            <div class="row">
+            <div class=".text-center" style="text-align: center">
                 <h2>Upload a photo</h2>
             </div>
-            <div class="row">
+            <div class=".text-center" style="text-align: center">
                 <p>We accept the following file formats: jpg, jpeg, png, tga, tiff, gif</p>
             </div>
             <div class="row">
+                <div class="col-md-3"></div>
                 <div class="col-md-6">
                     <form action="/Upload" method="post" enctype="multipart/form-data">
-                        <input type="file" name="photo_file">
-                        <input class="btn btn-primary" type="submit" value="Upload">
+                        <div class="form-group">
+                            <label for="title"></label>
+                            <input type="text" class="form-control" placeholder="Title" required="required" name="title">
+                        </div>
+                        <div class="form-group">
+                            <label for="tag"></label>
+                            <input type="text" class="form-control" placeholder="Tags (separate by comma)" required="required" name="tags">
+                        </div>
+                            <div class="form-group">
+                            <label for="description"></label>
+                            <textarea class="form-control" placeholder="Description" required="" name="description" rows="5" style="max-width: 100%" maxlength="160"></textarea>
+                        </div>
+                        <div class="form-group" style="text-align: center">
+                            <input type="file" name="photo_file">
+                            <input class="btn btn-primary" type="submit" value="Upload">
+                        </div>
                     </form>
                     <br><br>
                 </div>
+                <div class="col-md-3"></div>
             </div>
         </div>
         <!-- Footer -->

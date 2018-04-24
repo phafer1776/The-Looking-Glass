@@ -109,16 +109,47 @@ def upload_photo():
                 print('No file chosen')
                 return redirect(request.url)
             if file and file_allowed(file.filename):
-                filename = secure_filename(file.filename)
-                user_folder = str(session['user_id'])
-                user_path = os.path.dirname(os.path.abspath(__file__)) + '/uploads/' + user_folder
-                if not os.path.exists(user_path):
-                    os.makedirs(user_path)
-                app.config['UPLOAD_FOLDER'] = user_path
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                print('Saved file')
-                return redirect(url_for('uploaded_photo', filename=filename))
-        return
+                # Insert data into DB
+                image_title = request.form['title']
+                tag_field = request.form['tags']
+                image_description = request.form['description']
+                con = connect('looking_glass.db')
+                cur = con.cursor()
+                try:
+                    # Check if it already exists for that user
+                    cur.execute("""select * from image i where i.filename = ? and i.userid = ?;""",
+                                (file.filename, str(session['user_id'])))
+                    if cur.fetchone():
+                        print('Image is already in your collection')
+                        cur.close()
+                        con.close()
+                        return redirect('/UploadPhoto')
+                    cleaned_tags = [tag.strip() for tag in tag_field.split(',') if tag != '']
+                    # Call function to insert tags
+                    # Save file to user upload folder
+                    filename = secure_filename(file.filename)
+                    user_folder = str(session['user_id'])
+                    user_path = os.path.dirname(os.path.abspath(__file__)) + '/uploads/' + user_folder
+                    if not os.path.exists(user_path):
+                        os.makedirs(user_path)
+                    app.config['UPLOAD_FOLDER'] = user_path
+                    image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    file.save(image_path)
+                    print('Saved file')
+                    cur.execute("""insert into image(title, userid, rating, description, filename, path, public) 
+                                values (?,?,?,?,?,?,?);""", (image_title, str(session['user_id']), 3,
+                                image_description, file.filename, image_path, True))
+                    con.commit()
+                    cur.execute("""select * from image i where i.filename = ? and i.userid = ?;""",
+                                (file.filename, str(session['user_id'])))
+                    inserted_image = cur.fetchone()
+                    add_tags(cleaned_tags, inserted_image[0])
+                    cur.close()
+                    con.close()
+                    return redirect(url_for('uploaded_photo', filename=filename))
+                except Exception as e:
+                    print(e)
+        return redirect(request.url)
     except Exception as e:
         print(e)
 
@@ -191,7 +222,7 @@ def db_work():
                 'username text, password text, contributor boolean, downloads integer)')
     # Create image table
     cur.execute('CREATE TABLE IF NOT EXISTS image(id integer PRIMARY KEY AUTOINCREMENT, title text, userID integer, '
-                'rating float, description text, filename text, public boolean, '
+                'rating float, description text, filename text, path text, public boolean, '
                 'FOREIGN KEY (userID) REFERENCES user (id))')
     # Create tag table
     cur.execute('CREATE TABLE IF NOT EXISTS tag(id integer PRIMARY KEY AUTOINCREMENT, imageID integer, tag text, '
@@ -234,11 +265,14 @@ def file_allowed(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def upload_helper(user_id):
-    # Check if user uploads folder already exists, and create if necessary.
-    if not os.path.join(os.path.dirname(UPLOAD_FOLDER), str(user_id)):
-        os.mkdir(os.path.join(os.path.dirname(UPLOAD_FOLDER), str(user_id)))
-    return os.path.join(app.config['UPLOAD_FOLDER'], str(user_id) + '/')
+def add_tags(list_of_tags, image_id):
+    con = connect('looking_glass.db')
+    cur = con.cursor()
+    for image_tag in list_of_tags:
+        cur.execute("""insert into tag(imageID, tag) values (?,?);""", (image_id, image_tag))
+    con.commit()
+    cur.close()
+    con.close()
 
 
 if __name__ == '__main__':
