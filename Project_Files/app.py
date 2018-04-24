@@ -5,12 +5,10 @@ import sqlite3 as sql
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
-UPLOAD_FOLDER = './static/uploads'
 ALLOWED_EXTENSIONS = set(['jpg', 'jpeg', 'png', 'tga', 'tiff', 'gif'])
 
 app = Flask(__name__, template_folder='static')
 app.config['DEBUG'] = True
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = 'Something hard to guess!'
 
 
@@ -65,21 +63,25 @@ def register_user():
     username = request.form['username']
     password = request.form['password']
     confirmed_password = request.form['passwordConfirmed']
-    if password == confirmed_password:
-        password = generate_password_hash(password)
-    con = connect('looking_glass.db')
-    cur = con.cursor()
-    try:
-        cur.execute("""INSERT INTO user(firstName, lastName, username, password, contributor, downloads) VALUES """
-                    """(?,?,?,?,?,?)""", (first_name, last_name, username, password, False, 0))
-        con.commit()
-        cur.close()
-        con.close()
-        return jsonify({
-            'registered': True
-        })
-    except Exception as e:
-        print(e)
+    if first_name and last_name and username and password and confirmed_password:
+        if password == confirmed_password:
+            password = generate_password_hash(password)
+        con = connect('looking_glass.db')
+        cur = con.cursor()
+        try:
+            cur.execute("""INSERT INTO user(firstName, lastName, username, password, contributor, downloads) VALUES """
+                        """(?,?,?,?,?,?)""", (first_name, last_name, username, password, False, 0))
+            con.commit()
+            cur.close()
+            con.close()
+            return jsonify({
+                'registered': True
+            })
+        except Exception as e:
+            print(e)
+    return jsonify({
+        'formData': 'missing'
+    })
 
 
 @app.route('/Logout')
@@ -108,7 +110,13 @@ def upload_photo():
                 return redirect(request.url)
             if file and file_allowed(file.filename):
                 filename = secure_filename(file.filename)
+                user_folder = str(session['user_id'])
+                user_path = os.path.dirname(os.path.abspath(__file__)) + '/uploads/' + user_folder
+                if not os.path.exists(user_path):
+                    os.makedirs(user_path)
+                app.config['UPLOAD_FOLDER'] = user_path
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                print('Saved file')
                 return redirect(url_for('uploaded_photo', filename=filename))
         return
     except Exception as e:
@@ -208,6 +216,13 @@ def connect(db_filename):
 
 def file_allowed(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def upload_helper(user_id):
+    # Check if user uploads folder already exists, and create if necessary.
+    if not os.path.join(os.path.dirname(UPLOAD_FOLDER), str(user_id)):
+        os.mkdir(os.path.join(os.path.dirname(UPLOAD_FOLDER), str(user_id)))
+    return os.path.join(app.config['UPLOAD_FOLDER'], str(user_id) + '/')
 
 
 if __name__ == '__main__':
