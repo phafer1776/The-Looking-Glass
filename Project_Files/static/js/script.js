@@ -50,6 +50,27 @@ $(document).ready(function() {
         });
     });
 
+    $('#search-button').on('click', function() {
+        $.ajax({
+            url: '../../Search',
+            data: $('#search-bar').serialize(),
+            type: 'POST',
+            success: function(response) {
+                console.log(response);
+                if (response.received === true) {
+                    location = '../../Search';
+                }
+                else {
+                    console.log('Not received');
+                }
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+        console.log('tried ajax')
+    });
+
     // Hide the Login / Sign Up overlay when clicked outside of inner section.
     $(document).mouseup(function(e) {
         var inner = $('#overlay-inner');

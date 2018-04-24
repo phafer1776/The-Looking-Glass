@@ -180,6 +180,32 @@ def show_user_photos():
     return str(all_images)
 
 
+@app.route('/Search', methods=['POST'])
+def show_resulting_photos():
+    if request.method == 'POST':
+        print('Post')
+    search_value = jsonify({
+        'received': True
+    })
+    print(search_value)
+    value = request.form['search']
+    results = []
+    con = connect('looking_glass.db')
+    cur = con.cursor()
+    cur.execute("""select * from image i INNER JOIN tag t where i.id = t.imageID and t.tag = ?;""", (value,))
+    results.append(cur.fetchall())
+    cur.execute("""select * from image i where i.title = ?;""", (value,))
+    results.append(cur.fetchall())
+    cur.execute("""select * from image i INNER JOIN user u where i.userID = u.id and u.username = ?;""", (value,))
+    results.append(cur.fetchall())
+    print(results)
+    flattened_results = [image for table_results in results for image in table_results]
+    print(flattened_results)
+    # image path is [i][6], title is [i][1], rating is [i][3]
+    return render_template('/Photos.html')
+    # return render_template('/Photos.html', flattened_results=flattened_results)
+
+
 @app.route('/PrivateGallery')
 def load_private_photos_page():
     return render_template('/Private.html')

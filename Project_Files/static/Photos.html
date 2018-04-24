@@ -43,13 +43,21 @@
 
         <!-- Page Content -->
         <div class="container">
-            <span id="photo-slot"></span>
             <!-- Page Heading/Breadcrumbs -->
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
-                    <h3>Popular Photos</h3>
+                    <h3>Your Photos</h3>
                 </li>
             </ol>
+
+            <div class="gallery">
+                {% for photo in flattened_results %}
+                    <figure>
+                        <img src="photo[6]" alt="">
+                        <figcaption>photo[1]</figcaption>
+                    </figure>
+                {% endfor %}
+            </div>
 
             <!-- Gallery section -->
             <div class="gallery">
