@@ -133,6 +133,22 @@ def load_popular_photos_page():
     return render_template('/Popular.html')
 
 
+@app.route('/Photos')
+def show_user_photos():
+    user_path = os.path.dirname(os.path.abspath(__file__)) + '/uploads/' + str(session['user_id'])
+    if not os.path.exists(user_path):
+        os.makedirs(user_path)
+    app.config['UPLOAD_FOLDER'] = user_path
+    # server_path = '/static/uploads/' + str(session['user_id']) + '/'
+    all_images = []
+    file_list = os.listdir(app.config['UPLOAD_FOLDER'])
+    print(file_list)
+    for image in file_list:
+        if file_allowed(image):
+            all_images.append('<img src="/Uploads/' + image + '">')
+    return str(all_images)
+
+
 @app.route('/PrivateGallery')
 def load_private_photos_page():
     return render_template('/Private.html')
