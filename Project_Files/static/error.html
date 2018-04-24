@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>The Looking Glass - Dashboard</title>
+
+        <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <!-- Link Bootstrap and CSS -->
+        <link href="{{url_for('static', filename='styles/style.css')}}" rel="stylesheet">
+        <link href="{{url_for('static', filename='styles/bootstrap.min.css')}}" type="text/css" rel="stylesheet">
+
+        <!-- Bootstrap core JavaScript -->
+        <script src="{{url_for('static', filename='js/jquery-3.3.1.min.js')}}"></script>
+        <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+        <script src="{{url_for('static', filename='js/script.js')}}"></script>
+		
+    </head>
+
+    <body>
+        <!-- Navigation section -->
+        <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a href="#" class="navbar-left"><img src="/static/PICTURES/logo_White.png"></a>
+                <!--<a class="navbar-left" href="#">Home</a>-->
+
+                <div class="dropdown">
+                    <div class="greeting">Hi {{ first_name }}!</div>
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" href="#">{{user}}
+                        Menu
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Your Homepage</a></li>
+                        <li><a href="/UploadPhoto">Upload Photos</a></li>
+                        <li><a href="/Logout"><span class="glyphicon glyphicon-log-in"></span>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- /.container -->
+        </nav>
+
+        <!-- Error -->
+        <div style="text-align:center;">
+           <h1 style="font-size:40px; padding:150px;">404 Not Found</h1>
+		   <a href="/" class="btn btn-secondary btn-lg">Take Me Home </a>
+        </div>
+        <!-- /.Error -->
+		
+        <!-- Footer -->
+        <footer class="py-5 bg-dark footer" style="position: absolute; right: 0;  bottom: 0; left: 0;">
+            <div class="container">
+                <p class="m-0 text-center text-white">Copyright &copy; The Looking Glass 2018</p>
+            </div>
+            <!-- /.container -->
+        </footer>
+
+    </body>
+</html>
+
+
+

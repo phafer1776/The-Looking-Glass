@@ -222,6 +222,11 @@ def load_mission_statement_page():
     return render_template('/MissionStatement.html')
 
 
+@app.route('/Error/<error>', methods=['GET'])
+def show_error_page(error):
+    return render_template('/error.html', error_message=error)
+
+
 @app.route('/Dashboard')
 def load_dashboard_page():
     if 'username' in session:
