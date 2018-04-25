@@ -60,6 +60,16 @@
                     </figure>
                 {% endfor %}
             </div>
+            <div class="gallery">
+                {% for photo in flattened_results %}
+                    <figure>
+                        <a href="{{ photo[6] }}">
+                            <img src="{{ photo[6] }}" alt="">
+{#                          <figcaption>photo[1]</figcaption>#}
+                        </a>
+                    </figure>
+                {% endfor %}
+            </div>
             <hr>
         </div>
         <!-- /.container -->

@@ -53,6 +53,9 @@ $(document).ready(function() {
     });
 
     $('#search-button').on('click', function() {
+        window.location.href = '../../Search/' + $('#search-bar').val();
+/*
+        return;
         $.when(
             $.ajax({
                 url: '../../Search',
@@ -67,7 +70,7 @@ $(document).ready(function() {
                         console.log('Stored_results: ' + stored_results);
                         // stored_results = JSON.parse(localStorage.getItem('search_results'));
                         // console.log('stored_results: ' + stored_results[1]);
-                        // location = '../../SearchResults';
+                         location = '../../SearchResults';
                     }
                     else {
                         console.log('Not received');
@@ -77,7 +80,7 @@ $(document).ready(function() {
                     console.log(error);
                 }
             })
-        ).then(function () {
+        );*//*.then(function () {
             console.log('tried first ajax');
             console.log('Stored_results: ' + stored_results);
             console.log('Stored_results(stringify): ' + JSON.stringify(stored_results));
@@ -97,7 +100,7 @@ $(document).ready(function() {
                 }
             });
             console.log('Tried second AJAX');
-        });
+        });*/
     });
 
     // Hide the Login / Sign Up overlay when clicked outside of inner section.

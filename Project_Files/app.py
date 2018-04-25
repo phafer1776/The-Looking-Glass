@@ -182,11 +182,10 @@ def load_popular_photos_page():
     return render_template('/Popular.html')
 
 
-@app.route('/Search', methods=['POST'])
-def search_for_photos():
-    if request.method == 'POST':
-        print('Post')
-    value = request.form['search']
+@app.route('/Search/<query>', methods=['GET'])
+def search_for_photos(query):
+    value = query
+    # value = request.form['search']
     results = []
     con = connect('looking_glass.db')
     cur = con.cursor()
@@ -200,12 +199,12 @@ def search_for_photos():
     flattened_results = [image for table_results in results for image in table_results]
     print(flattened_results)
     # image path is [i][6], title is [i][1], rating is [i][3]
-    js_gets_this = jsonify({
-        'received': True,
-        'search_results': flattened_results
-    })
-    print(js_gets_this)
-    return js_gets_this
+    # js_gets_this = jsonify({
+    #     'received': True,
+    #     'search_results': flattened_results
+    # })
+    # print(js_gets_this)
+    return render_template('/Photos.html', flattened_results=flattened_results)
 
 
 @app.route('/SearchResults', methods=['GET', 'POST'])
