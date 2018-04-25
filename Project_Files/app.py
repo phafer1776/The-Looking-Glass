@@ -159,11 +159,6 @@ def uploaded_photo(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
-@app.route('/PopularPhotos')
-def load_popular_photos_page():
-    return render_template('/Popular.html')
-
-
 @app.route('/Photos')
 def show_user_photos():
     user_path = os.path.dirname(os.path.abspath(__file__)) + '/uploads/' + str(session['user_id'])
@@ -171,13 +166,20 @@ def show_user_photos():
         os.makedirs(user_path)
     app.config['UPLOAD_FOLDER'] = user_path
     # server_path = '/static/uploads/' + str(session['user_id']) + '/'
-    all_images = []
+    user_photos = []
     file_list = os.listdir(app.config['UPLOAD_FOLDER'])
     print(file_list)
     for image in file_list:
         if file_allowed(image):
-            all_images.append('<img src="/Uploads/' + image + '">')
-    return str(all_images)
+            user_photos.append('/Uploads/' + image)
+    return render_template('/Photos.html', user_photos=user_photos)
+
+
+@app.route('/PopularPhotos')
+def load_popular_photos_page():
+    if 'username' in session:
+        return redirect('/Photos')
+    return render_template('/Popular.html')
 
 
 @app.route('/Search', methods=['POST'])
@@ -204,16 +206,19 @@ def search_for_photos():
     })
     print(js_gets_this)
     return js_gets_this
-    # return render_template('/Photos.html')
-    # return render_template('/Photos.html', flattened_results=flattened_results)
 
 
-@app.route('/SearchResults', methods=['POST'])
+@app.route('/SearchResults', methods=['GET', 'POST'])
 def get_results():
     print('Made it to searchresults')
-    jsres = request.form['stored_results']
-    print(jsres)
-    return 1
+    try:
+        if request.method == 'POST':
+            print('Received post')
+            if request.is_json:
+                print('Is JSON')
+        return render_template('/error.html')
+    except Exception as e:
+        print(e)
 
 
 @app.route('/PrivateGallery')

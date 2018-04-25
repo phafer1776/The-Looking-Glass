@@ -53,38 +53,50 @@ $(document).ready(function() {
     });
 
     $('#search-button').on('click', function() {
-        $.ajax({
-            url: '../../Search',
-            data: $('#search-bar'),
-            type: 'POST',
-            success: function(response) {
-                console.log(response);
-                if (response.received === true) {
-                    // console.log(response.search_results);
-                    localStorage.setItem('search_results', JSON.stringify(response.search_results));
-                    stored_results = JSON.parse(localStorage.getItem('search_results'));
-                    // console.log('stored_results: ' + stored_results[1]);
-                    // location = '../../SearchResults';
+        $.when(
+            $.ajax({
+                url: '../../Search',
+                data: $('#search-bar'),
+                type: 'POST',
+                success: function(response) {
+                    console.log(response);
+                    if (response.received === true) {
+                        console.log(response.search_results);
+                        localStorage.setItem('search_results', JSON.stringify(response.search_results));
+                        stored_results = localStorage.getItem('search_results');
+                        console.log('Stored_results: ' + stored_results);
+                        // stored_results = JSON.parse(localStorage.getItem('search_results'));
+                        // console.log('stored_results: ' + stored_results[1]);
+                        // location = '../../SearchResults';
+                    }
+                    else {
+                        console.log('Not received');
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
                 }
-                else {
-                    console.log('Not received');
+            })
+        ).then(function () {
+            console.log('tried first ajax');
+            console.log('Stored_results: ' + stored_results);
+            console.log('Stored_results(stringify): ' + JSON.stringify(stored_results));
+            location = '../../SearchResults';
+            $.ajax({
+                url: '../../SearchResults',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                results: JSON.stringify(stored_results),
+                success: function(response) {
+                    console.log('SearchResults ajax success!');
+                    console.log(response);
+                },
+                error: function(error) {
+                    console.log(error);
                 }
-            },
-            error: function(error) {
-                console.log(error);
-            }
-        });
-        console.log('tried ajax');
-        $.ajax({
-            url: '../../SearchResults',
-            type: 'POST',
-            results: stored_results,
-            success: function(response) {
-                console.log(response);
-            },
-            error: function(error) {
-                console.log(error)
-            }
+            });
+            console.log('Tried second AJAX');
         });
     });
 
