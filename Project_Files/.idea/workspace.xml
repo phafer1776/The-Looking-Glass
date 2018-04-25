@@ -10,12 +10,17 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
+<<<<<<< HEAD
     <SUITE FILE_PATH="coverage/Project_Files$app.coverage" NAME="app Coverage Results" MODIFIED="1524056353494" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Project_Files$Project_Files.coverage" NAME="Project_Files Coverage Results" MODIFIED="1522697073673" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
 <<<<<<< Updated upstream
 =======
     <SUITE FILE_PATH="coverage/Project_Files$app.coverage" NAME="app Coverage Results" MODIFIED="1524002779103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
 >>>>>>> Stashed changes
+=======
+    <SUITE FILE_PATH="coverage/Project_Files$Project_Files.coverage" NAME="Project_Files Coverage Results" MODIFIED="1522697073673" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/Project_Files$app.coverage" NAME="app Coverage Results" MODIFIED="1522863986712" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+>>>>>>> parent of 8443463... Updating to master
   </component>
   <component name="DatabaseView">
     <option name="SHOW_INTERMEDIATE" value="true" />
@@ -56,9 +61,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="app.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="app.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app.py">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
 <<<<<<< Updated upstream
             <state relative-caret-position="-1598">
               <caret line="38" column="1" lean-forward="true" selection-start-line="38" selection-start-column="1" selection-end-line="38" selection-end-column="1" />
@@ -78,11 +84,18 @@
               <folding>
                 <element signature="e#0#102#0" expanded="true" />
 >>>>>>> Stashed changes
+=======
+            <state relative-caret-position="102">
+              <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
+              <folding>
+                <element signature="e#0#74#0" expanded="true" />
+>>>>>>> parent of 8443463... Updating to master
               </folding>
             </state>
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
 <<<<<<< Updated upstream
       <file leaf-file-name="style.css" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/static/styles/style.css">
@@ -140,6 +153,8 @@
           </provider>
         </entry>
       </file>
+=======
+>>>>>>> parent of 8443463... Updating to master
     </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
@@ -188,32 +203,32 @@
     <option name="height" value="1039" />
 =======
   <component name="ProjectFrameBounds" extendedState="6">
+<<<<<<< HEAD
     <option name="x" value="460" />
     <option name="y" value="1" />
     <option name="width" value="1146" />
     <option name="height" value="920" />
 >>>>>>> Stashed changes
+=======
+    <option name="x" value="947" />
+    <option name="width" value="972" />
+    <option name="height" value="1040" />
+>>>>>>> parent of 8443463... Updating to master
   </component>
   <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1">
-      <flattenPackages />
-      <showMembers />
-      <showModules />
-      <showLibraryContents />
-      <hideEmptyPackages />
-      <abbreviatePackageNames />
-      <autoscrollToSource />
-      <autoscrollFromSource />
-      <sortByType />
-      <manualOrder />
+    <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+<<<<<<< HEAD
 <<<<<<< Updated upstream
       <pane id="Scratches" />
       <pane id="Scope" />
 =======
 >>>>>>> Stashed changes
+=======
+      <pane id="Scope" />
+>>>>>>> parent of 8443463... Updating to master
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -242,7 +257,10 @@
           <select />
         </subPane>
       </pane>
+<<<<<<< HEAD
       <pane id="Scope" />
+=======
+>>>>>>> parent of 8443463... Updating to master
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -266,6 +284,7 @@
   </component>
   <component name="RunManager" selected="Python.app">
     <configuration name="Project_Files" type="PythonConfigurationType" factoryName="Python" singleton="true">
+      <module name="Project_Files" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -276,8 +295,7 @@
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="Project_Files" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" runner="coverage.py" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="C:\Users\Incinerator\Desktop\CIS 4930 - Advanced Python\looking-glass\Project_Files\app.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -285,6 +303,7 @@
       <option name="MODULE_MODE" value="false" />
     </configuration>
     <configuration name="app" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Project_Files" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -295,26 +314,22 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="Project_Files" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" runner="coverage.py" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/app.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <list size="2">
-      <item index="0" class="java.lang.String" itemvalue="Python.Project_Files" />
-      <item index="1" class="java.lang.String" itemvalue="Python.app" />
+    <list>
+      <item itemvalue="Python.Project_Files" />
+      <item itemvalue="Python.app" />
     </list>
     <recent_temporary>
-      <list size="1">
-        <item index="0" class="java.lang.String" itemvalue="Python.app" />
+      <list>
+        <item itemvalue="Python.app" />
       </list>
     </recent_temporary>
-  </component>
-  <component name="ShelveChangesManager" show_recycled="false">
-    <option name="remove_strategy" value="false" />
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -339,6 +354,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
+<<<<<<< HEAD
     <frame x="776" y="1" width="1146" height="1039" extended-state="0" />
     <layout>
 <<<<<<< Updated upstream
@@ -379,6 +395,24 @@
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info id="Favorites" order="2" side_tool="true" />
+=======
+    <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
+    <layout>
+      <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49561402" weight="0.32928178" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50877196" side_tool="true" weight="0.32928178" />
+      <window_info anchor="bottom" id="Database Changes" order="8" weight="0.3292683" />
+      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Python Console" order="7" sideWeight="0.49561402" weight="0.32928178" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3292683" />
+      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.49122807" weight="0.32928178" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15167095" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="right" id="Database" order="3" visible="true" weight="0.1722365" />
+      <window_info anchor="right" id="SciView" order="3" weight="0.32969153" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+>>>>>>> parent of 8443463... Updating to master
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
@@ -386,8 +420,12 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info active="true" anchor="bottom" id="Database Console" order="7" visible="true" weight="0.3292683" />
+<<<<<<< HEAD
       <window_info anchor="bottom" id="Find" order="1" weight="0.3292683" />
 >>>>>>> Stashed changes
+=======
+      <window_info anchor="bottom" id="Find" order="1" />
+>>>>>>> parent of 8443463... Updating to master
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -401,13 +439,10 @@
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
   </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager />
-    <watches-manager />
-  </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/app.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
 <<<<<<< Updated upstream
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -554,6 +589,12 @@
             <marker date="1523985276000" expanded="true" signature="4344:4503" ph="CREATE TABLE... tag" />
             <marker date="1523985276000" expanded="true" signature="4550:4781" ph="CREATE TABLE... comment" />
             <marker date="1523985276000" expanded="true" signature="4832:5078" ph="CREATE TABLE... rating" />
+=======
+        <state relative-caret-position="646">
+          <caret line="38" column="38" selection-start-line="38" selection-start-column="38" selection-end-line="38" selection-end-column="38" />
+          <folding>
+            <element signature="e#0#74#0" expanded="true" />
+>>>>>>> parent of 8443463... Updating to master
           </folding>
         </state>
       </provider>
@@ -563,6 +604,7 @@
         <state relative-caret-position="289">
           <caret line="17" column="60" lean-forward="true" selection-start-line="17" selection-start-column="60" selection-end-line="17" selection-end-column="60" />
           <folding>
+<<<<<<< HEAD
             <element signature="e#0#102#0" expanded="true" />
             <marker date="1523985276000" expanded="true" signature="676:711" ph="SELECT * FRO... user" />
             <marker date="1523985276000" expanded="true" signature="1630:1759" ph="INSERT INTO user... " />
@@ -572,6 +614,9 @@
             <marker date="1523985276000" expanded="true" signature="4344:4503" ph="CREATE TABLE... tag" />
             <marker date="1523985276000" expanded="true" signature="4550:4781" ph="CREATE TABLE... comment" />
             <marker date="1523985276000" expanded="true" signature="4832:5078" ph="CREATE TABLE... rating" />
+=======
+            <element signature="e#0#74#0" expanded="true" />
+>>>>>>> parent of 8443463... Updating to master
           </folding>
         </state>
       </provider>
@@ -579,6 +624,7 @@
     <entry file="file://$PROJECT_DIR$/static/SinglePhoto.html" />
     <entry file="file://$PROJECT_DIR$/app.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="85">
           <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
           <folding>
@@ -737,11 +783,16 @@
         <state relative-caret-position="39">
           <caret line="154" column="62" selection-start-line="154" selection-start-column="62" selection-end-line="154" selection-end-column="62" />
 >>>>>>> Stashed changes
+=======
+        <state relative-caret-position="307">
+          <caret line="170" lean-forward="true" selection-start-line="170" selection-end-line="170" />
+>>>>>>> parent of 8443463... Updating to master
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
 <<<<<<< Updated upstream
         <state relative-caret-position="-1598">
           <caret line="38" column="1" lean-forward="true" selection-start-line="38" selection-start-column="1" selection-end-line="38" selection-end-column="1" />
@@ -761,10 +812,17 @@
           <folding>
             <element signature="e#0#102#0" expanded="true" />
 >>>>>>> Stashed changes
+=======
+        <state relative-caret-position="102">
+          <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
+          <folding>
+            <element signature="e#0#74#0" expanded="true" />
+>>>>>>> parent of 8443463... Updating to master
           </folding>
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/static/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="459">
@@ -789,5 +847,7 @@
         </state>
       </provider>
     </entry>
+=======
+>>>>>>> parent of 8443463... Updating to master
   </component>
 </project>
