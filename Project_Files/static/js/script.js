@@ -1,3 +1,5 @@
+var stored_results;
+
 $(document).ready(function() {
     // Show the Login / Sign Up overlay.
     $('.signup-link').on('click', function() {
@@ -53,12 +55,16 @@ $(document).ready(function() {
     $('#search-button').on('click', function() {
         $.ajax({
             url: '../../Search',
-            data: $('#search-bar').serialize(),
+            data: $('#search-bar'),
             type: 'POST',
             success: function(response) {
                 console.log(response);
                 if (response.received === true) {
-                    location = '../../Search';
+                    // console.log(response.search_results);
+                    localStorage.setItem('search_results', JSON.stringify(response.search_results));
+                    stored_results = JSON.parse(localStorage.getItem('search_results'));
+                    // console.log('stored_results: ' + stored_results[1]);
+                    // location = '../../SearchResults';
                 }
                 else {
                     console.log('Not received');
@@ -68,7 +74,18 @@ $(document).ready(function() {
                 console.log(error);
             }
         });
-        console.log('tried ajax')
+        console.log('tried ajax');
+        $.ajax({
+            url: '../../SearchResults',
+            type: 'POST',
+            results: stored_results,
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(error) {
+                console.log(error)
+            }
+        });
     });
 
     // Hide the Login / Sign Up overlay when clicked outside of inner section.

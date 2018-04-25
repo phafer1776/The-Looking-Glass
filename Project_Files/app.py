@@ -181,13 +181,9 @@ def show_user_photos():
 
 
 @app.route('/Search', methods=['POST'])
-def show_resulting_photos():
+def search_for_photos():
     if request.method == 'POST':
         print('Post')
-    search_value = jsonify({
-        'received': True
-    })
-    print(search_value)
     value = request.form['search']
     results = []
     con = connect('looking_glass.db')
@@ -202,8 +198,22 @@ def show_resulting_photos():
     flattened_results = [image for table_results in results for image in table_results]
     print(flattened_results)
     # image path is [i][6], title is [i][1], rating is [i][3]
-    return render_template('/Photos.html')
+    js_gets_this = jsonify({
+        'received': True,
+        'search_results': flattened_results
+    })
+    print(js_gets_this)
+    return js_gets_this
+    # return render_template('/Photos.html')
     # return render_template('/Photos.html', flattened_results=flattened_results)
+
+
+@app.route('/SearchResults', methods=['POST'])
+def get_results():
+    print('Made it to searchresults')
+    jsres = request.form['stored_results']
+    print(jsres)
+    return 1
 
 
 @app.route('/PrivateGallery')
