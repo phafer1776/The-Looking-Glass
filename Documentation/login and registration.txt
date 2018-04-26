@@ -1,0 +1,128 @@
+-------------------------------------------------------------------------------
+Login / Register Functionality (Dennis)
+-------------------------------------------------------------------------------
+
+from flask_bootstrap import Bootstrap
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField, FileField
+from wtforms.validators import InputRequired, Email, Length
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+
+bootstrap = Bootstrap(app)
+
+class LoginForm(FlaskForm):
+    username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
+    password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
+
+class RegisterForm(FlaskForm):
+    firtsName = StringField('First Name', validators=[InputRequired(), Length(min=2, max=50)])
+    lastName = StringField('Last Name', validators=[InputRequired(), Length(min=2, max=15)])
+    username = StringField('username', validators=[InputRequired(), Length(min=2, max=15)])
+    password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
+    repassword = PasswordField('Re-enter password', validators=[InputRequired(), Length(min=8, max=80)])
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if request.method == 'POST':
+        try:
+            con = sql.connect('looking_glass.db')
+            cur = con.cursor()
+            userpassword = cur.execute("SELECT password FROM user WHERE username ='{}';".format(form.username.data)).fetchone()[0]
+            if userpassword == generate_password_hash(form.password.data, method='sha256'):
+                return redirect(url_for('dashboard')+'/'+'{}'.format(form.username.data))
+            else:
+                return redirect(url_for('login'))
+        except:
+            return redirect(url_for('login'))
+    return render_template('Login.html', form=form)
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    form = RegisterForm()
+
+    if request.method == 'POST':
+        try:
+            hashed_password = generate_password_hash(form.password.data, method='sha256')
+            con = sql.connect('looking_glass.db')
+            cur = con.cursor()
+            cur.execute("INSERT INTO user(firstname, lastName, username, password, contributor, downloads) "
+                    "VALUES (?,?,?,?,?,?);",(form.firtsName.data, form.lastName.data, form.username.data, 
+                hashed_password, 'contributor', 'downloads'))
+            con.commit()
+            return redirect(url_for('login'))
+        except:
+            con.rollback()
+            return redirect(url_for('signup'))
+        finally:
+            con.close()
+    return render_template('SignUp.html', form=form)
+	 
+
+	 
+-------------------------------------------------------------------------------
+Signup.html (Dennis)
+------------------------------------------------------------------------------- 
+	 
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+Sign Up
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="static/styles/signin.css">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <form class="form-signin" method="POST" action="/signup">
+    <h2 class="form-signin-heading">Sign Up</h2>
+    {{ form.hidden_tag() }}
+    {{ wtf.form_field(form.firtsName) }}
+    {{ wtf.form_field(form.lastName) }}
+    {{ wtf.form_field(form.username) }}
+	{{ wtf.form_field(form.password) }}
+	{{ wtf.form_field(form.repassword) }}
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Please Sign Up</button>
+  </form>
+
+</div> <!-- /container -->
+{% endblock %}
+
+
+-------------------------------------------------------------------------------
+Login.html (Dennis)
+------------------------------------------------------------------------------- 
+
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="static/styles/signin.css">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+
+      <form class="form-signin" method="POST" action="/login">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        {{ form.hidden_tag() }}
+        {{ wtf.form_field(form.username) }}
+        {{ wtf.form_field(form.password) }}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+
+    </div> <!-- /container -->
+{% endblock %}
+
+	 

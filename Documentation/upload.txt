@@ -1,0 +1,77 @@
+-------------------------------------------------------------------------------
+Upload.html (Dennis)
+-------------------------------------------------------------------------------	
+	
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+Upload
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<style type="text/css">
+    
+  .login-form {
+    width: 340px;
+      margin: 50px auto;
+  }
+    .login-form form {
+      margin-bottom: 15px;
+        background: #f7f7f7;
+        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+        padding: 30px;
+    }
+    .login-form h2 {
+        margin: 0 0 15px;
+    }
+    .form-control, .btn {
+        min-height: 38px;
+        border-radius: 2px;
+    }
+    .btn {        
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    body {
+        padding-top: 70px;
+    }
+
+    .imageupload {
+        margin: 20px 0;
+    }
+
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-form" >
+    <form action="/upload" method="POST">
+        <h2 class="text-center">Upload image</h2>
+         <div class="form-group" style="text-align: center">
+            <label class="btn btn-default btn-file" >Browse File
+                <input type="file" style="display: none;" name="file">
+            </label>
+        </div>
+        <div class="form-group">
+            <label for="title"></label>
+            <input type="text" class="form-control" placeholder="Title" required="required" name="title">
+        </div>
+        <div class="form-group">
+            <label for="tag"></label>
+            <input type="text" class="form-control" placeholder="Tag (separate by comma)" required="required" name="tag">
+        </div>
+        <div class="form-group">
+            <label for="description"></label>
+            <textarea class="form-control" placeholder="Description" required="" name="description" rows="5" style="max-width: 100%" maxlength="160"></textarea>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">Submit</button>
+        </div>
+    </form>
+
+</div>
+{% endblock %}
