@@ -1,3 +1,9 @@
+<!---------------------------------------------------------------------------------------------------------------------
+< HTML for The Looking Glass
+< Filename: photos.html
+< Advanced Python - Spring 2018 - University of South Florida
+< Group 2: Paul Hafer, Conner Wulf, Timothy Carney, Denis Saez Rodriguez, Joshua Imarhiagbe
+<--------------------------------------------------------------------------------------------------------------------->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -51,7 +57,7 @@
             </ol>
 
             <div class="gallery">
-                {% for photo in user_photos %}
+                {% for photo in resulting_photos %}
                     <figure>
                         <a href="{{ photo }}">
                             <img src="{{ photo }}" alt="">
@@ -61,7 +67,7 @@
                 {% endfor %}
             </div>
             <div class="gallery">
-                {% for photo in flattened_results %}
+                {% for photo in resulting_photos %}
                     <figure>
                         <a href="{{ photo[6] }}">
                             <img src="{{ photo[6] }}" alt="">

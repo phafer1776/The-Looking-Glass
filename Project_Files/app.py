@@ -1,7 +1,12 @@
+# ---------------------------------------------------------------------------------------------------------------------
+# Flask Web Application for The Looking Glass
+# Filename: app.py
+# Advanced Python - Spring 2018 - University of South Florida
+# Group 2: Paul Hafer, Conner Wulf, Timothy Carney, Denis Saez Rodriguez, Joshua Imarhiagbe
+# ---------------------------------------------------------------------------------------------------------------------
 import os
-from flask import Flask, request, Response, json, jsonify, render_template, redirect, url_for, session, \
-    send_from_directory
 import sqlite3 as sql
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session, send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
@@ -14,11 +19,16 @@ app.config['SECRET_KEY'] = 'Something hard to guess!'
 
 @app.route('/')
 def home():
+    """Show the homepage."""
     return render_template('/index.html')
 
 
 @app.route('/Login', methods=['GET', 'POST'])
 def login_user():
+    """Authenticate user login information. If the username already exists, check the entered password against the one
+    stored in the DB. If it's a match, authenticate the user and send the response to the client. Else the user is not
+    authenticated.
+    """
     try:
         username = request.form['username']
         password = request.form['password']
@@ -46,7 +56,6 @@ def login_user():
                 })
                 print(json_data)
                 return json_data
-                # return redirect('/Dashboard')
             else:
                 redirect('/')
                 return jsonify({
@@ -58,6 +67,9 @@ def login_user():
 
 @app.route('/SignupUser', methods=['POST'])
 def register_user():
+    """Register a new user. Verify the form data, and if all cells are filled with data, insert the new user data into
+    the DB. Send a response to the client.
+    """
     first_name = request.form['firstName']
     last_name = request.form['lastName']
     username = request.form['username']
@@ -86,6 +98,7 @@ def register_user():
 
 @app.route('/Logout')
 def logout_user():
+    """Log the user out of the application. Pop the session data for the user, and redirect to the home page."""
     session.pop('user_id', None)
     session.pop('username', None)
     session.pop('firstName', None)
@@ -94,11 +107,17 @@ def logout_user():
 
 @app.route('/UploadPhoto')
 def show_upload_page():
-    return render_template('/Upload.html')
+    """Show the upload page."""
+    return render_template('/upload.html')
 
 
 @app.route('/Upload', methods=['GET', 'POST'])
 def upload_photo():
+    """Upload a photo to the server. If the user chooses a valid file to upload, get the form data and connect to the
+    DB. If the user has not previously uploaded that file, upload the file to that user's folder on the server. If it is
+    the first time that user has uploaded, it creates a folder for that user's ID and uploads the file to that folder.
+    Add all relevant information to the DB.
+    """
     try:
         if request.method == 'POST':
             if 'photo_file' not in request.files:
@@ -116,7 +135,7 @@ def upload_photo():
                 con = connect('looking_glass.db')
                 cur = con.cursor()
                 try:
-                    # Check if it already exists for that user
+                    # Check if the file already exists for that user.
                     cur.execute("""select * from image i where i.filename = ? and i.userid = ?;""",
                                 (file.filename, str(session['user_id'])))
                     if cur.fetchone():
@@ -124,17 +143,17 @@ def upload_photo():
                         cur.close()
                         con.close()
                         return redirect('/UploadPhoto')
+                    # Separate the tags and put them in a list to be added to the DB.
                     cleaned_tags = [tag.strip() for tag in tag_field.split(',') if tag != '']
-                    # Call function to insert tags
-                    # Save file to user upload folder
-                    filename = secure_filename(file.filename)
+                    filename = secure_filename(file.filename)  # OS safe filename
+                    # Locate the path to the user's folder.
                     user_folder = str(session['user_id'])
                     user_path = os.path.dirname(os.path.abspath(__file__)) + '/uploads/' + user_folder
                     if not os.path.exists(user_path):
                         os.makedirs(user_path)
-                    app.config['UPLOAD_FOLDER'] = user_path
+                    app.config['UPLOAD_FOLDER'] = user_path  # Set user's upload folder.
                     image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                    file.save(image_path)
+                    file.save(image_path)  # Save file to user upload folder
                     print('Saved file')
                     cur.execute("""insert into image(title, userid, rating, description, filename, path, public) 
                                 values (?,?,?,?,?,?,?);""", (image_title, str(session['user_id']), 3,
@@ -143,7 +162,7 @@ def upload_photo():
                     cur.execute("""select * from image i where i.filename = ? and i.userid = ?;""",
                                 (file.filename, str(session['user_id'])))
                     inserted_image = cur.fetchone()
-                    add_tags(cleaned_tags, inserted_image[0])
+                    add_tags(cleaned_tags, inserted_image[0])  # Add tags to tag table in DB for that image.
                     cur.close()
                     con.close()
                     return redirect(url_for('uploaded_photo', filename=filename))
@@ -156,36 +175,42 @@ def upload_photo():
 
 @app.route('/Uploads/<filename>')
 def uploaded_photo(filename):
+    """Show uploaded file."""
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
 @app.route('/Photos')
 def show_user_photos():
+    """Show the photos page for that user. Send the list of tuples to the HTML for display."""
     user_path = os.path.dirname(os.path.abspath(__file__)) + '/uploads/' + str(session['user_id'])
+
+    # I don't think we need this.
     if not os.path.exists(user_path):
         os.makedirs(user_path)
+
     app.config['UPLOAD_FOLDER'] = user_path
-    # server_path = '/static/uploads/' + str(session['user_id']) + '/'
     user_photos = []
     file_list = os.listdir(app.config['UPLOAD_FOLDER'])
     print(file_list)
     for image in file_list:
         if file_allowed(image):
             user_photos.append('/Uploads/' + image)
-    return render_template('/Photos.html', user_photos=user_photos)
+    return render_template('/photos.html', user_photos=user_photos)
 
 
 @app.route('/PopularPhotos')
 def load_popular_photos_page():
+    """Show popular photos page if the user is logged in."""
     if 'username' in session:
         return redirect('/Photos')
-    return render_template('/Popular.html')
+    return render_template('/popular.html')
 
 
-@app.route('/Search/<query>', methods=['GET'])
-def search_for_photos(query):
-    value = query
-    # value = request.form['search']
+@app.route('/Search/<value>', methods=['GET'])
+def search_for_photos(value):
+    """Search for photos in the DB by the search value. It searches the DB by tag, title, and username. It then
+    converts a list of lists of tuples to a single list of tuples, and sends those to the HTML for display.
+    """
     results = []
     con = connect('looking_glass.db')
     cur = con.cursor()
@@ -198,54 +223,41 @@ def search_for_photos(query):
     print(results)
     flattened_results = [image for table_results in results for image in table_results]
     print(flattened_results)
-    # image path is [i][6], title is [i][1], rating is [i][3]
-    # js_gets_this = jsonify({
-    #     'received': True,
-    #     'search_results': flattened_results
-    # })
-    # print(js_gets_this)
-    return render_template('/Photos.html', flattened_results=flattened_results)
-
-
-@app.route('/SearchResults', methods=['GET', 'POST'])
-def get_results():
-    print('Made it to searchresults')
-    try:
-        if request.method == 'POST':
-            print('Received post')
-            if request.is_json:
-                print('Is JSON')
-        return render_template('/error.html')
-    except Exception as e:
-        print(e)
+    return render_template('/photos.html', flattened_results=flattened_results)
 
 
 @app.route('/PrivateGallery')
 def load_private_photos_page():
-    return render_template('/Private.html')
+    """Show the private photo page."""
+    return render_template('/private.html')
 
 
 @app.route('/Photo/<int:image_id>', methods=['GET'])
 def load_single_photo_page(image_id):
-    # Get the image file name from the db, and load it into the html iFrame.
-    return render_template('/SinglePhoto.html')
+    """Show the page for displaying a single photo"""
+    return render_template('/singlephoto.html')
 
 
 @app.route('/MissionStatement')
 def load_mission_statement_page():
-    return render_template('/MissionStatement.html')
+    """Show the mission statement page."""
+    return render_template('/missionstatement.html')
 
 
 @app.route('/Error/<error>', methods=['GET'])
 def show_error_page(error):
+    """Show the error page and send the error to the HTML."""
     return render_template('/error.html', error_message=error)
 
 
 @app.route('/Dashboard')
 def load_dashboard_page():
+    """Show the dashboard page only if the user is logged in. Send the user's first name to the HTML
+    for a greeting.
+    """
     if 'username' in session:
         first_name = session['firstName']
-        return render_template('/Dashboard.html', first_name=first_name)
+        return render_template('/dashboard.html', first_name=first_name)
 
 
 # This route is only for DB testing, and will be removed before it is submitted
@@ -293,8 +305,7 @@ def db_work():
 
 
 def connect(db_filename):
-    """
-    This function is used to connect to the database, and display an error to the console
+    """This function is used to connect to the database, and display an error to the console
     if unsuccessful. Use this function whenever you need to access the database.
     :param db_filename:
     :return a sqlite db connection:
@@ -307,10 +318,12 @@ def connect(db_filename):
 
 
 def file_allowed(filename):
+    """This checks the filename to ensure it has an allowed file extension."""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 def add_tags(list_of_tags, image_id):
+    """Add the list of tags to the tag table in the DB."""
     con = connect('looking_glass.db')
     cur = con.cursor()
     for image_tag in list_of_tags:

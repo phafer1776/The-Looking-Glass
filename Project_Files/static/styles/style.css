@@ -1,5 +1,7 @@
 /**********************************************************************************************************************
- * The Looking Glass - Advanced Python - Group 2
+ * Stylesheet for The Looking Glass
+ * Advanced Python - Spring 2018 - University of South Florida
+ * Group 2: Paul Hafer, Conner Wulf, Timothy Carney, Denis Saez Rodriguez, Joshua Imarhiagbe
  *
  * We modified the CSS file to meet the needs of our project from the following template.
  *
@@ -103,7 +105,6 @@ body {
     align-items: center;
 }
 
-/* Maybe */
 .footer {
     position: fixed;
     left: 0;

@@ -1,11 +1,18 @@
-var stored_results;
-
+/**********************************************************************************************************************
+* JavaScript event handlers and functions for The Looking Glass
+* Advanced Python - Spring 2018 - University of South Florida
+* Group 2: Paul Hafer, Conner Wulf, Timothy Carney, Denis Saez Rodriguez, Joshua Imarhiagbe
+**********************************************************************************************************************/
 $(document).ready(function() {
+
     // Show the Login / Sign Up overlay.
     $('.signup-link').on('click', function() {
         document.getElementById("overlay").style.display = "inline";
         document.getElementById("overlay-inner").style.display = "inline";
     });
+
+    // Make an AJAX call to post the form data to the server for authentication and redirect to the Dashboard
+    // upon success. Display an error message if login information does not match
     $('#login-button').on('click', function() {
         $.ajax({
             url: '../../Login',
@@ -15,7 +22,7 @@ $(document).ready(function() {
                 console.log(response);
                 if (response.authenticated === true) {
                     localStorage.setItem('userdata', JSON.stringify(response.user));
-                    populateUser();
+                    // populateUser();
                     location = '../../Dashboard';
                 }
                 else {
@@ -27,9 +34,10 @@ $(document).ready(function() {
             }
         });
     });
+
+    // Make an AJAX call to post the form data to the server to be added to the DB if it is valid data. Clear data from
+    // the form upon success. Display an error message if something goes wrong.
     $('#signup-button').on('click', function() {
-        // $('#form-signup').find("input[name=firstName], textarea").val(validateName(textContent));
-        // $('#form-signup').find("input[name=lastName], textarea").val(validateName(textContent));
         $.ajax({
             url: '../../SignupUser',
             data: $('#form-signup').serialize(),
@@ -52,55 +60,9 @@ $(document).ready(function() {
         });
     });
 
+    // Send the search bar text to the server for searching for matches in the DB.
     $('#search-button').on('click', function() {
         window.location.href = '../../Search/' + $('#search-bar').val();
-/*
-        return;
-        $.when(
-            $.ajax({
-                url: '../../Search',
-                data: $('#search-bar'),
-                type: 'POST',
-                success: function(response) {
-                    console.log(response);
-                    if (response.received === true) {
-                        console.log(response.search_results);
-                        localStorage.setItem('search_results', JSON.stringify(response.search_results));
-                        stored_results = localStorage.getItem('search_results');
-                        console.log('Stored_results: ' + stored_results);
-                        // stored_results = JSON.parse(localStorage.getItem('search_results'));
-                        // console.log('stored_results: ' + stored_results[1]);
-                         location = '../../SearchResults';
-                    }
-                    else {
-                        console.log('Not received');
-                    }
-                },
-                error: function(error) {
-                    console.log(error);
-                }
-            })
-        );*//*.then(function () {
-            console.log('tried first ajax');
-            console.log('Stored_results: ' + stored_results);
-            console.log('Stored_results(stringify): ' + JSON.stringify(stored_results));
-            location = '../../SearchResults';
-            $.ajax({
-                url: '../../SearchResults',
-                type: 'POST',
-                dataType: 'json',
-                contentType: 'application/json',
-                results: JSON.stringify(stored_results),
-                success: function(response) {
-                    console.log('SearchResults ajax success!');
-                    console.log(response);
-                },
-                error: function(error) {
-                    console.log(error);
-                }
-            });
-            console.log('Tried second AJAX');
-        });*/
     });
 
     // Hide the Login / Sign Up overlay when clicked outside of inner section.
@@ -117,13 +79,14 @@ $(document).ready(function() {
         return /^[a-zA-Z ]+$/.test(str);
     }
 
-    function populateUser() {
-        var user = JSON.parse(localStorage.getItem('userdata'));
-        console.log(user);
-        $('.greeting').append(user.firstName);
-    }
+    // function populateUser() {
+    //     var user = JSON.parse(localStorage.getItem('userdata'));
+    //     console.log(user);
+    //     $('.greeting').append(user.firstName);
+    // }
 
-    // Verify that name is alphabetic and capitalize the first letter to keep DB consistent.
+    // Helper function to verify that name is alphabetic and capitalize the first letter to keep DB consistent.
+    // Currently not being used.
     function validateName(str) {
         if (isAlpha(str)) {
             return str.charAt(0).toUpperCase() + str.slice(1);
@@ -132,5 +95,4 @@ $(document).ready(function() {
             $('#alert-message-signup').text('First name and last name may only contain alphabetic characters.')
         }
     }
-
 });
