@@ -148,7 +148,7 @@ def upload_photo():
                     filename = secure_filename(file.filename)  # OS safe filename
                     # Locate the path to the user's folder.
                     user_folder = str(session['user_id'])
-                    user_path = os.path.dirname(os.path.abspath(__file__)) + '/uploads/' + user_folder
+                    user_path = os.path.dirname(os.path.abspath(__file__)) + '/static/uploads/' + user_folder
                     if not os.path.exists(user_path):
                         os.makedirs(user_path)
                     app.config['UPLOAD_FOLDER'] = user_path  # Set user's upload folder.
@@ -179,29 +179,44 @@ def uploaded_photo(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
-@app.route('/Photos')
-def show_user_photos():
-    """Show the photos page for that user. Send the list of tuples to the HTML for display."""
-    user_path = os.path.dirname(os.path.abspath(__file__)) + '/uploads/' + str(session['user_id'])
+@app.route('/ShowPhotos')
+def show_photos_page():
+    try:
+        if session['user_id']:
+            return redirect('/Photos/' + str(session['user_id']))
+    except Exception as e:
+        print(e)
 
-    # I don't think we need this.
-    if not os.path.exists(user_path):
-        os.makedirs(user_path)
 
-    app.config['UPLOAD_FOLDER'] = user_path
-    user_photos = []
-    file_list = os.listdir(app.config['UPLOAD_FOLDER'])
-    print(file_list)
-    for image in file_list:
-        if file_allowed(image):
-            user_photos.append('/Uploads/' + image)
-    return render_template('/photos.html', user_photos=user_photos)
+@app.route('/Photos/<user_id>')
+def show_user_photos(user_id):
+    """Show the photos page for that user. Send the list of images to the HTML for display."""
+    try:
+        if user_id:
+            images = []
+            user_path = os.path.relpath('static/uploads/' + str(user_id))
+            contents = os.listdir(user_path)
+            for image in contents:
+                images.append(user_path + '\\' + image)
+            con = connect('looking_glass.db')
+            cur = con.cursor()
+            cur.execute("""select i.id, title, rating, username from image i INNER JOIN user u where 
+                          i.userID = u.id and u.id = ?;""", (user_id,))
+            row = cur.fetchall()
+            print(row)
+            # photo_info = [{'image_id': , 'title': , 'rating': , 'username': } for row in cur.fetchall]
+            return render_template('/photos.html', user_photos=images)
+        else:
+            return redirect('/PopularPhotos')
+    except Exception as e:
+        print(e)
 
 
 @app.route('/PopularPhotos')
 def load_popular_photos_page():
     """Show popular photos page if the user is logged in."""
     if 'username' in session:
+        # Set it up for all photos!!!
         return redirect('/Photos')
     return render_template('/popular.html')
 
@@ -223,7 +238,7 @@ def search_for_photos(value):
     print(results)
     flattened_results = [image for table_results in results for image in table_results]
     print(flattened_results)
-    return render_template('/photos.html', flattened_results=flattened_results)
+    return render_template('/photos.html', resulting_photos=flattened_results)
 
 
 @app.route('/PrivateGallery')
@@ -232,9 +247,15 @@ def load_private_photos_page():
     return render_template('/private.html')
 
 
-@app.route('/Photo/<int:image_id>', methods=['GET'])
-def load_single_photo_page(image_id):
+@app.route('/Photo/<file_path>', methods=['GET'])
+def load_single_photo_page(file_path):
     """Show the page for displaying a single photo"""
+    print(file_path)
+    con = connect('looking_glass.db')
+    cur = con.cursor()
+    cur.execute("""select * from image i where i.path = ?;""", (file_path,))
+    photo = cur.fetchone()
+    print(photo)
     return render_template('/singlephoto.html')
 
 
