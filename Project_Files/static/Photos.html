@@ -47,32 +47,43 @@
             <!-- /.container -->
         </nav>
 
+        <hr>
         <!-- Page Content -->
         <div class="container">
             <!-- Page Heading/Breadcrumbs -->
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
-                    <h3>Your Photos</h3>
+                    <h3>{{ greeting }}</h3>
                 </li>
             </ol>
 
-{#            <div class="gallery">#}
-{#                {% for photo in resulting_photos %}#}
-{#                    <figure>#}
-{#                        <a href="{{ os.path.relpath(photo[6]) }}">#}
-{#                            <img src="{{ os.path.relpath(photo[6]) }}" alt="">#}
-{#                          <figcaption>photo[1]</figcaption>#}
-{#                        </a>#}
-{#                    </figure>#}
-{#                {% endfor %}#}
-{#            </div>#}
+            <div class="gallery">
+                {% for photo in popular_photos %}
+                    <figure class="figure">
+                        <a href="/Photo/{{ photo['image_id'] }}">
+                            <img src="../{{ photo['filepath'] }}" class="img-thumbnail" alt="">
+                        </a>
+                        <figcaption class="figure-caption"><p>{{ photo['title'] }}</p></figcaption>
+                    </figure>
+                {% endfor %}
+            </div>
             <div class="gallery">
                 {% for photo in user_photos %}
-                    <figure>
-                        <a href="../{{ photo }}">
-                            <img src="../{{ photo }}" alt="">
-                          <figcaption>photo</figcaption>
+                    <figure class="figure">
+                        <a href="/Photo/{{ photo['image_id'] }}">
+                            <img src="../{{ photo['filepath'] }}" class="img-thumbnail" alt="">
                         </a>
+                        <figcaption class="figure-caption">{{ photo['title'] }}</figcaption>
+                    </figure>
+                {% endfor %}
+            </div>
+            <div class="gallery">
+                {% for photo in resulting_photos %}
+                    <figure class="figure">
+                        <a href="/Photo/{{ photo['image_id'] }}">
+                            <img src="../{{ photo['filepath'] }}" class="img-thumbnail" alt="">
+                        </a>
+                        <figcaption class="figure-caption">{{ photo['title'] }}</figcaption>
                     </figure>
                 {% endfor %}
             </div>

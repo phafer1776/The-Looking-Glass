@@ -47,6 +47,7 @@
             <!-- /.container -->
         </nav>
 
+        <hr>
         <!-- Page Content -->
         <div class="container">
             <!-- Page Heading/Breadcrumbs -->
@@ -54,12 +55,13 @@
                 <li class="breadcrumb-item">
                     <a href="/Dashboard">Home</a>
                 </li>
-                <li class="breadcrumb-item active">Portfolio Item</li>
+                <li class="breadcrumb-item active">{{ photo['title'] }}</li>
             </ol>
 
             <div class="row">
                 <div class="col-md-8">
-                    <img class="img-fluid" src="http://placehold.it/750x500" alt="">
+                    <img class="img-fluid" src="../{{ photo['filepath'] }}" alt="">
+                    <a class="btn btn-primary" href="../{{ photo['filepath'] }}" download>Download</a>
                 </div>
                 <div class="col-md-4">
                     <h3 class="my-3">Rating</h3>
@@ -71,7 +73,7 @@
                                 <span class="fa fa-star-o" data-rating="3"></span>
                                 <span class="fa fa-star-o" data-rating="4"></span>
                                 <span class="fa fa-star-o" data-rating="5"></span>
-                                <input type="hidden" name="whatever1" class="rating-value" value="2.56">
+                                <input type="hidden" name="whatever1" class="rating-value" value="{{ photo['rating'] }}">
                             </div>
                         </div>
                     </div>
@@ -89,6 +91,14 @@
                 </div>
             </div>
             <!-- /.row -->
+
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>About this photo</h2>
+                    <p>{{ photo['description'] }}</p>
+                    <h2>Photo credit: {{ photo['username'] }}</h2>
+                </div>
+            </div>
 
             <!-- Related Pictures Row -->
             <h3 class="my-4">Related Pictures</h3>

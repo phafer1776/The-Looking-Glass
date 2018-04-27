@@ -231,7 +231,7 @@ img {
 }
 
 .gallery figure figcaption {
-    display: none;
+    display: inherit;
 }
 
 #p01 {

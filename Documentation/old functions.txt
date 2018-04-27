@@ -1,0 +1,87 @@
+'C:\\Users\\Incinerator\\Desktop\\CIS 4930 - Advanced Python\\looking-glass\\Project_Files/static/uploads/7\\ph1.jpg'
+
+'static\\uploads7/Jellyfish.jpg'
+
+
+Should get it like:
+'static\\uploads\\7\\Jellyfish.jpg'
+
+
+
+@app.route('/PopularPhotos')
+def load_popular_photos_page():
+    """Show popular photos page if the user is logged in."""
+    try:
+        if 'username' in session:
+            greeting = 'Popular Photos'
+            base_path = os.path.relpath('static/uploads/')
+            images = []
+            con = connect('looking_glass.db')
+            cur = con.cursor()
+            cur.execute("""select i.id, title, rating, username, userID, filename from image i INNER JOIN user u where 
+                                      i.userID = u.id and i.public = 1;""")
+            public_photos = cur.fetchall()
+            print(public_photos)
+            photo_info = [{'image_id': row[0], 'title': row[1], 'rating': row[2], 'username': row[3], 'user_id': row[4],
+                           'filename': row[5]} for row in public_photos]
+            print(photo_info)
+            for image in photo_info:
+                if image['rating'] >= 3.0:
+                    images.append(base_path + '\\' + str(image['user_id']) + '\\' + image['filename'])
+            print(images)
+
+            return render_template('/photos.html', popular_photos=images, photo_info=photo_info, greeting=greeting)
+    except Exception as e:
+        print(e)
+    return render_template('/popular.html')
+	
+	
+
+
+
+    try:
+        user_path = os.path.dirname(os.path.abspath(__file__)) + '/uploads/' + str(session['user_id'])
+
+        # I don't think we need this.
+        if not os.path.exists(user_path):
+            os.makedirs(user_path)
+
+        app.config['UPLOAD_FOLDER'] = os.path.relpath(user_path)
+        print(app.config['UPLOAD_FOLDER'])
+        user_path = os.path.relpath(user_path)
+        print(user_path)
+        print('RELPATH: ' + os.path.relpath(app.config['UPLOAD_FOLDER']))
+        user_photos = []
+        file_list = os.listdir(app.config['UPLOAD_FOLDER'])
+        print(file_list)
+        for image in file_list:
+            if file_allowed(image):
+                user_photos.append(image)
+        l = []
+        for i in user_photos:
+            l.append(send_from_directory(user_path, i))
+        print(l)
+        return send_from_directory(user_path, user_photos[0])
+    except Exception as e:
+        print(e)
+    # return redirect(url_for('/Uploads/', filename=user_photos[0]))
+    results = []
+    try:
+        con = connect('looking_glass.db')
+        cur = con.cursor()
+        cur.execute("""select * from image i where i.userID=?;""", (session['user_id'],))
+        results.append(cur.fetchall())
+        print(results)
+        flattened_results = [image for table_results in results for image in table_results]
+        print(flattened_results)
+        rel_path = os.path.relpath(flattened_results[0][6])
+        return redirect(rel_path)
+        # photo_dict = {'title': image[1], 'user_id': image[2]}
+        # pth = flattened_results[0][6]
+        # print(pth)
+        # relative_path = '../uploads/' + str(session['user_id'])
+        # lst_of_files = os.path.relpath(pth)
+        # print(lst_of_files)
+    except Exception as e:
+        print(e)
+    return render_template('/photos.html', user_photos=flattened_results)

@@ -184,6 +184,8 @@ def show_photos_page():
     try:
         if session['user_id']:
             return redirect('/Photos/' + str(session['user_id']))
+        else:
+            return render_template('/error.html')
     except Exception as e:
         print(e)
 
@@ -193,6 +195,7 @@ def show_user_photos(user_id):
     """Show the photos page for that user. Send the list of images to the HTML for display."""
     try:
         if user_id:
+            greeting = session['username'] + '\'s Photos'
             images = []
             user_path = os.path.relpath('static/uploads/' + str(user_id))
             contents = os.listdir(user_path)
@@ -200,12 +203,14 @@ def show_user_photos(user_id):
                 images.append(user_path + '\\' + image)
             con = connect('looking_glass.db')
             cur = con.cursor()
-            cur.execute("""select i.id, title, rating, username from image i INNER JOIN user u where 
-                          i.userID = u.id and u.id = ?;""", (user_id,))
-            row = cur.fetchall()
-            print(row)
-            # photo_info = [{'image_id': , 'title': , 'rating': , 'username': } for row in cur.fetchall]
-            return render_template('/photos.html', user_photos=images)
+            cur.execute("""SELECT i.id, title, rating, username, filename FROM image i INNER JOIN user u WHERE 
+                          i.userID = u.id AND u.id = ?;""", (user_id,))
+            results = cur.fetchall()
+            print(results)
+            images = [{'image_id': row[0], 'title': row[1], 'filepath': user_path + '\\' + row[4]}
+                      for row in results if row[2] >= 3.0]
+            print(images)
+            return render_template('/photos.html', user_photos=images, greeting=greeting)
         else:
             return redirect('/PopularPhotos')
     except Exception as e:
@@ -215,9 +220,22 @@ def show_user_photos(user_id):
 @app.route('/PopularPhotos')
 def load_popular_photos_page():
     """Show popular photos page if the user is logged in."""
-    if 'username' in session:
-        # Set it up for all photos!!!
-        return redirect('/Photos')
+    try:
+        if 'username' in session:
+            greeting = 'Popular Photos'
+            base_path = os.path.relpath('static/uploads/')
+            con = connect('looking_glass.db')
+            cur = con.cursor()
+            cur.execute("""SELECT i.id, title, rating, username, userID, filename FROM image i INNER JOIN user u WHERE 
+                                      i.userID = u.id AND i.public = 1;""")
+            public_photos = cur.fetchall()
+            print(public_photos)
+            images = [{'image_id': row[0], 'title': row[1], 'filepath': base_path + '\\' + str(row[4]) + '\\' + row[5]}
+                      for row in public_photos if row[2] >= 3.0]
+            print(images)
+            return render_template('/photos.html', popular_photos=images, greeting=greeting)
+    except Exception as e:
+        print(e)
     return render_template('/popular.html')
 
 
@@ -227,18 +245,25 @@ def search_for_photos(value):
     converts a list of lists of tuples to a single list of tuples, and sends those to the HTML for display.
     """
     results = []
+    base_path = os.path.relpath('static/uploads/')
     con = connect('looking_glass.db')
     cur = con.cursor()
-    cur.execute("""select * from image i INNER JOIN tag t where i.id = t.imageID and t.tag = ?;""", (value,))
+    cur.execute("""SELECT i.id, title, rating, userID, filename FROM image i INNER JOIN tag t WHERE i.id = t.imageID 
+                AND t.tag = ?;""", (value,))
     results.append(cur.fetchall())
-    cur.execute("""select * from image i where i.title = ?;""", (value,))
+    cur.execute("""SELECT i.id, title, rating, userID, filename FROM image i WHERE i.title = ?;""", (value,))
     results.append(cur.fetchall())
-    cur.execute("""select * from image i INNER JOIN user u where i.userID = u.id and u.username = ?;""", (value,))
+    cur.execute("""SELECT i.id, title, rating, userID, filename FROM image i INNER JOIN user u WHERE i.userID = u.id 
+                AND u.username = ?;""", (value,))
     results.append(cur.fetchall())
     print(results)
     flattened_results = [image for table_results in results for image in table_results]
     print(flattened_results)
-    return render_template('/photos.html', resulting_photos=flattened_results)
+    duplicates_removed = list(dict((photo[0], photo) for photo in flattened_results).values())
+    print(duplicates_removed)
+    images = [{'image_id': row[0], 'title': row[1], 'rating': row[2], 'filepath': base_path + '\\' + str(row[3]) + '\\'
+              + row[4]} for row in duplicates_removed]
+    return render_template('/photos.html', resulting_photos=images)
 
 
 @app.route('/PrivateGallery')
@@ -247,16 +272,23 @@ def load_private_photos_page():
     return render_template('/private.html')
 
 
-@app.route('/Photo/<file_path>', methods=['GET'])
-def load_single_photo_page(file_path):
+@app.route('/Photo/<image_id>', methods=['GET'])
+def load_single_photo_page(image_id):
     """Show the page for displaying a single photo"""
-    print(file_path)
-    con = connect('looking_glass.db')
-    cur = con.cursor()
-    cur.execute("""select * from image i where i.path = ?;""", (file_path,))
-    photo = cur.fetchone()
-    print(photo)
-    return render_template('/singlephoto.html')
+    try:
+        base_path = os.path.relpath('static/uploads/')
+        con = connect('looking_glass.db')
+        cur = con.cursor()
+        cur.execute("""SELECT i.id, title, rating, description, userID, filename, username FROM image i INNER JOIN user u
+                    WHERE i.userID = u.id AND i.id = ?;""", (image_id,))
+        photo = cur.fetchone()
+        print(photo)
+        photo_info = {'image_id': photo[0], 'title': photo[1], 'rating': photo[2], 'description': photo[3],
+                      'username': photo[6], 'filepath': base_path + '\\' + str(photo[4]) + '\\' + photo[5]}
+        print(photo_info['filepath'])
+        return render_template('/singlephoto.html', photo=photo_info)
+    except Exception as e:
+        print(e)
 
 
 @app.route('/MissionStatement')
@@ -348,7 +380,7 @@ def add_tags(list_of_tags, image_id):
     con = connect('looking_glass.db')
     cur = con.cursor()
     for image_tag in list_of_tags:
-        cur.execute("""insert into tag(imageID, tag) values (?,?);""", (image_id, image_tag))
+        cur.execute("""INSERT INTO tag(imageID, tag) VALUES (?,?);""", (image_id, image_tag))
     con.commit()
     cur.close()
     con.close()
