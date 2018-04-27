@@ -124,19 +124,42 @@ body {
     height: 30px;
 }
 
-/* Maybe */
 .portfolio-item {
     margin-bottom: 30px;
 }
 
-.star-rating {
-    line-height:32px;
-    font-size:1.25em;
+.stars-outside {
+    display: inline-block;
+    position: relative;
+    font-family: FontAwesome;
 }
 
-.star-rating .fa-star {
-    color: #444341;
+.stars-outside::before {
+    content: "\f006 \f006 \f006 \f006 \f006";
 }
+
+.stars-inside {
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 0;
+}
+
+.stars-inside::before {
+    content: "\f005 \f005 \f005 \f005 \f005";
+    color: #f8ce0b;
+}
+
+/*.star-rating {*/
+    /*line-height:32px;*/
+    /*font-size:1.25em;*/
+/*}*/
+
+/*.star-rating .fa-star {*/
+    /*color: #444341;*/
+/*}*/
 
 .container>div>button {
     background-color: #343a40;

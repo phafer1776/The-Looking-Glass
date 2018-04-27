@@ -283,12 +283,56 @@ def load_single_photo_page(image_id):
                     WHERE i.userID = u.id AND i.id = ?;""", (image_id,))
         photo = cur.fetchone()
         print(photo)
-        photo_info = {'image_id': photo[0], 'title': photo[1], 'rating': photo[2], 'description': photo[3],
+        cur.execute("""SELECT AVG(rating) FROM rating WHERE imageID = ?;""", (image_id,))
+        db_rating = cur.fetchone()
+        overall_rating = photo[2]
+        print(db_rating)
+        if db_rating[0]:
+            overall_rating = (db_rating[0] + photo[2]) / 2
+        print(overall_rating)
+        photo_info = {'image_id': photo[0], 'title': photo[1], 'rating': overall_rating, 'description': photo[3],
                       'username': photo[6], 'filepath': base_path + '\\' + str(photo[4]) + '\\' + photo[5]}
         print(photo_info['filepath'])
-        return render_template('/singlephoto.html', photo=photo_info)
+        cur.execute("""SELECT imageComment FROM comment WHERE imageID = ?;""", (image_id,))
+        db_comments = cur.fetchall()
+        flattened_comments = [image[0] for image in db_comments]
+        print(flattened_comments)
+        return render_template('/singlephoto.html', photo=photo_info, comments=flattened_comments)
     except Exception as e:
         print(e)
+
+
+@app.route('/Photo/<image_id>/<comment>/<rating>', methods=['GET'])
+def send_comment(image_id, comment, rating):
+    print(image_id, comment, rating)
+    try:
+        if 'username' in session:
+            con = connect('looking_glass.db')
+            cur = con.cursor()
+            cur.execute("""SELECT * FROM comment c WHERE c.userID = ? AND c.imageID = ? AND c.imageComment = ?;""",
+                        (session['user_id'], image_id, comment))
+            if cur.fetchall():
+                print('Comment already exists.')
+                return render_template('error.html')
+            cur.execute("""INSERT INTO comment (userID, imageID, imageComment) VALUES (?,?,?);""",
+                        (session['user_id'], image_id, comment))
+            print(cur.fetchone())
+            con.commit()
+            print('Comment added successfully.')
+            cur.execute("""SELECT * FROM rating WHERE userID = ? AND imageID = ?;""", (session['user_id'], image_id))
+            if cur.fetchall():
+                print('You already voted for this image.')
+                return render_template('error.html')
+            cur.execute("""INSERT INTO rating (userID, imageID, rating) VALUES (?,?,?);""",
+                        (session['user_id'], image_id, rating))
+            con.commit()
+            cur.close()
+            con.close()
+            print('Rating added successfully.')
+            return render_template('dashboard.html')
+    except Exception as e:
+        print(e)
+        return render_template('error.html')
 
 
 @app.route('/MissionStatement')

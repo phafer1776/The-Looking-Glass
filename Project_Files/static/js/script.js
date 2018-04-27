@@ -65,6 +65,11 @@ $(document).ready(function() {
         window.location.href = '../../Search/' + $('#search-bar').val();
     });
 
+    $('#send-comment').on('click', function() {
+        window.location.href = '../../Photo/' + $('#image-id').text() + '/' + $('#comment-box').val() +
+            '/' + $('#rating-selector').val();
+    });
+
     // Hide the Login / Sign Up overlay when clicked outside of inner section.
     $(document).mouseup(function(e) {
         var inner = $('#overlay-inner');
