@@ -61,8 +61,9 @@ def login_user():
                 return jsonify({
                     'authenticated': False
                 })
-    except Exception as e:
+    except LoginError as e:
         print(e)
+        return render_template('error.html', error_message=e)
 
 
 @app.route('/SignupUser', methods=['POST'])
@@ -82,15 +83,16 @@ def register_user():
         cur = con.cursor()
         try:
             cur.execute("""INSERT INTO user(firstName, lastName, username, password, contributor, downloads) VALUES """
-                        """(?,?,?,?,?,?)""", (first_name, last_name, username, password, False, 0))
+                        """(?,?,?,?,?,?)""", (first_name, last_name, username, password, 0, 0))
             con.commit()
             cur.close()
             con.close()
             return jsonify({
                 'registered': True
             })
-        except Exception as e:
+        except SQLRegisterUserError as e:
             print(e)
+            return render_template('error.html', error_message=e)
     return jsonify({
         'formData': 'missing'
     })
@@ -132,6 +134,12 @@ def upload_photo():
                 image_title = request.form['title']
                 tag_field = request.form['tags']
                 image_description = request.form['description']
+                is_public = request.form['private']
+                if is_public == 'private':
+                    print('private')
+                    is_public = False
+                else:
+                    is_public = True
                 con = connect('looking_glass.db')
                 cur = con.cursor()
                 try:
@@ -150,6 +158,9 @@ def upload_photo():
                     user_folder = str(session['user_id'])
                     user_path = os.path.dirname(os.path.abspath(__file__)) + '/static/uploads/' + user_folder
                     if not os.path.exists(user_path):
+                        # User becomes contributor after first upload.
+                        cur.execute("""UPDATE user SET contributor = 1 WHERE id = ?;""", (session['user_id']))
+                        con.commit()
                         os.makedirs(user_path)
                     app.config['UPLOAD_FOLDER'] = user_path  # Set user's upload folder.
                     image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -157,7 +168,7 @@ def upload_photo():
                     print('Saved file')
                     cur.execute("""insert into image(title, userid, rating, description, filename, path, public) 
                                 values (?,?,?,?,?,?,?);""", (image_title, str(session['user_id']), 3,
-                                image_description, file.filename, image_path, True))
+                                image_description, file.filename, image_path, is_public))
                     con.commit()
                     cur.execute("""select * from image i where i.filename = ? and i.userid = ?;""",
                                 (file.filename, str(session['user_id'])))
@@ -166,11 +177,13 @@ def upload_photo():
                     cur.close()
                     con.close()
                     return redirect(url_for('uploaded_photo', filename=filename))
-                except Exception as e:
+                except UploadPhotoError as e:
                     print(e)
+                    return render_template('error.html', error_message=e)
         return redirect(request.url)
-    except Exception as e:
+    except UploadPhotoError as e:
         print(e)
+        return render_template('error.html', error_message=e)
 
 
 @app.route('/Uploads/<filename>')
@@ -186,8 +199,9 @@ def show_photos_page():
             return redirect('/Photos/' + str(session['user_id']))
         else:
             return render_template('/error.html')
-    except Exception as e:
+    except UserPhotoError as e:
         print(e)
+        return render_template('error.html', error_message=e)
 
 
 @app.route('/Photos/<user_id>')
@@ -195,7 +209,7 @@ def show_user_photos(user_id):
     """Show the photos page for that user. Send the list of images to the HTML for display."""
     try:
         if user_id:
-            greeting = session['username'] + '\'s Photos'
+            greeting = session['username'] + '\'s '
             images = []
             user_path = os.path.relpath('static/uploads/' + str(user_id))
             contents = os.listdir(user_path)
@@ -213,8 +227,9 @@ def show_user_photos(user_id):
             return render_template('/photos.html', user_photos=images, greeting=greeting)
         else:
             return redirect('/PopularPhotos')
-    except Exception as e:
+    except UserPhotoError as e:
         print(e)
+        return render_template('error.html', error_message=e)
 
 
 @app.route('/PopularPhotos')
@@ -222,20 +237,21 @@ def load_popular_photos_page():
     """Show popular photos page if the user is logged in."""
     try:
         if 'username' in session:
-            greeting = 'Popular Photos'
+            greeting = 'Popular '
             base_path = os.path.relpath('static/uploads/')
             con = connect('looking_glass.db')
             cur = con.cursor()
-            cur.execute("""SELECT i.id, title, rating, username, userID, filename FROM image i INNER JOIN user u WHERE 
-                                      i.userID = u.id AND i.public = 1;""")
+            cur.execute("""SELECT i.id, title, r.rating, i.userID, filename FROM image i INNER JOIN rating r WHERE 
+                        i.id = r.imageID AND i.public = 1;""")
             public_photos = cur.fetchall()
             print(public_photos)
-            images = [{'image_id': row[0], 'title': row[1], 'filepath': base_path + '\\' + str(row[4]) + '\\' + row[5]}
-                      for row in public_photos if row[2] >= 3.0]
+            images = [{'image_id': row[0], 'title': row[1], 'filepath': base_path + '\\' + str(row[3]) + '\\' + row[4]}
+                      for row in public_photos if row[2] >= 3.5]
             print(images)
             return render_template('/photos.html', popular_photos=images, greeting=greeting)
-    except Exception as e:
+    except PopularPhotoError as e:
         print(e)
+        return render_template('error.html', error_message=e)
     return render_template('/popular.html')
 
 
@@ -269,7 +285,24 @@ def search_for_photos(value):
 @app.route('/PrivateGallery')
 def load_private_photos_page():
     """Show the private photo page."""
-    return render_template('/private.html')
+    try:
+        if 'username' in session:
+            greeting = 'Private '
+            base_path = os.path.relpath('static/uploads/')
+            con = connect('looking_glass.db')
+            cur = con.cursor()
+            cur.execute("""SELECT i.id, title, filename FROM image i WHERE i.userID = ? AND i.public = 0;""",
+                        (session['user_id'],))
+            private_photos = cur.fetchall()
+            print(private_photos)
+            images = [{'image_id': row[0], 'title': row[1], 'filepath': base_path + '\\' + str(session['user_id']) +
+                       '\\' + row[2]} for row in private_photos]
+            print(images)
+            return render_template('/photos.html', private_photos=images, greeting=greeting)
+    except PopularPhotoError as e:
+        print(e)
+        return render_template('error.html', error_message=e)
+    return render_template('/popular.html')
 
 
 @app.route('/Photo/<image_id>', methods=['GET'])
@@ -279,31 +312,46 @@ def load_single_photo_page(image_id):
         base_path = os.path.relpath('static/uploads/')
         con = connect('looking_glass.db')
         cur = con.cursor()
-        cur.execute("""SELECT i.id, title, rating, description, userID, filename, username FROM image i INNER JOIN user u
-                    WHERE i.userID = u.id AND i.id = ?;""", (image_id,))
+        cur.execute("""SELECT contributor, downloads FROM user WHERE id = ?;""", (session['user_id'],))
+        user = cur.fetchone()
+        cur.execute("""SELECT i.id, title, rating, description, userID, filename, username FROM image i 
+                    INNER JOIN user u WHERE i.userID = u.id AND i.id = ?;""", (image_id,))
         photo = cur.fetchone()
         print(photo)
-        cur.execute("""SELECT AVG(rating) FROM rating WHERE imageID = ?;""", (image_id,))
-        db_rating = cur.fetchone()
-        overall_rating = photo[2]
+        # Contributors have unlimited downloads. Others are limited to 10 downloads.
+        if user[0] or user[1] < 10:
+            download_allowed = True
+        # cur.execute("""SELECT AVG(rating) FROM rating WHERE imageID = ?;""", (image_id,))
+        # db_rating = cur.fetchone()  # Get the average rating for this image.
+        db_rating = photo[2]  # photo[2] contains initial rating.
         print(db_rating)
-        if db_rating[0]:
-            overall_rating = (db_rating[0] + photo[2]) / 2
-        print(overall_rating)
-        photo_info = {'image_id': photo[0], 'title': photo[1], 'rating': overall_rating, 'description': photo[3],
+        # if db_rating[0]:
+        #     overall_rating = (db_rating[0] + photo[2]) / 2
+        # print(overall_rating)
+        photo_info = {'image_id': photo[0], 'title': photo[1], 'rating': db_rating, 'description': photo[3],
                       'username': photo[6], 'filepath': base_path + '\\' + str(photo[4]) + '\\' + photo[5]}
         print(photo_info['filepath'])
         cur.execute("""SELECT imageComment FROM comment WHERE imageID = ?;""", (image_id,))
-        db_comments = cur.fetchall()
+        db_comments = cur.fetchall()  # Get all the comments for this image.
         flattened_comments = [image[0] for image in db_comments]
         print(flattened_comments)
-        return render_template('/singlephoto.html', photo=photo_info, comments=flattened_comments)
-    except Exception as e:
+        dl_count = user[1] + 1
+        cur.execute("""UPDATE user SET downloads = ? WHERE id = ?;""", (dl_count, session['user_id']))
+        con.commit()
+        cur.close()
+        con.close()
+        return render_template('/singlephoto.html', photo=photo_info, comments=flattened_comments,
+                               can_download=download_allowed)
+    except SinglePhotoError as e:
         print(e)
+        return render_template('error.html', error_message=e)
 
 
 @app.route('/Photo/<image_id>/<comment>/<rating>', methods=['GET'])
 def send_comment(image_id, comment, rating):
+    """Insert rating and comment into the rating and comment tables of the DB if the comment has not been previously
+    submitted, and if the user has not previously voted for that specific image. Upon successful insertion, the user
+    is sent to a page that acknowledges the input."""
     print(image_id, comment, rating)
     try:
         if 'username' in session:
@@ -311,28 +359,34 @@ def send_comment(image_id, comment, rating):
             cur = con.cursor()
             cur.execute("""SELECT * FROM comment c WHERE c.userID = ? AND c.imageID = ? AND c.imageComment = ?;""",
                         (session['user_id'], image_id, comment))
-            if cur.fetchall():
+            found = cur.fetchone()
+            if found:
                 print('Comment already exists.')
-                return render_template('error.html')
             cur.execute("""INSERT INTO comment (userID, imageID, imageComment) VALUES (?,?,?);""",
                         (session['user_id'], image_id, comment))
             print(cur.fetchone())
             con.commit()
             print('Comment added successfully.')
             cur.execute("""SELECT * FROM rating WHERE userID = ? AND imageID = ?;""", (session['user_id'], image_id))
-            if cur.fetchall():
+            found = cur.fetchone()
+            if found:
                 print('You already voted for this image.')
-                return render_template('error.html')
             cur.execute("""INSERT INTO rating (userID, imageID, rating) VALUES (?,?,?);""",
                         (session['user_id'], image_id, rating))
+            con.commit()
+            cur.execute("""SELECT AVG(rating) FROM rating WHERE imageID = ?;""", (image_id,))
+            average_rating = cur.fetchall()
+            print(average_rating)
+            avg_rating = (average_rating[0][0] + int(rating)) / 2
+            cur.execute("""UPDATE image SET rating = ? WHERE id = ?;""", (avg_rating, image_id))
             con.commit()
             cur.close()
             con.close()
             print('Rating added successfully.')
-            return render_template('dashboard.html')
-    except Exception as e:
+            return render_template('comment.html')
+    except SendCommentError as e:
         print(e)
-        return render_template('error.html')
+        return render_template('error.html', error_message=e)
 
 
 @app.route('/MissionStatement')
@@ -353,21 +407,12 @@ def load_dashboard_page():
     for a greeting.
     """
     if 'username' in session:
-        first_name = session['firstName']
-        return render_template('/dashboard.html', first_name=first_name)
+        return render_template('/dashboard.html', first_name=session['firstName'])
 
 
-# This route is only for DB testing, and will be removed before it is submitted
 @app.route('/db')
 def db_work():
-    """
-    The CREATE TABLE commands should only have to be run once. The cursor is how
-    database queries are executed using the execute method. You can put your SQL
-    statement directly in the parameter. To use python variables in the queries,
-    use a comma after the query, and use a python tuple. Use a '?' as a placeholder
-    in the query. If you only need one variable, you still need to use a 1 item tuple.
-    eg. (username,)
-    """
+    """The CREATE TABLE commands should only have to be run once."""
     con = connect('looking_glass.db')
     cur = con.cursor()  # Get cursor
 
@@ -389,15 +434,6 @@ def db_work():
     cur.execute('CREATE TABLE IF NOT EXISTS rating(id integer PRIMARY KEY AUTOINCREMENT, userID integer, '
                 'imageID integer, rating integer, FOREIGN KEY (userID) REFERENCES user (id), '
                 'FOREIGN KEY (imageID) REFERENCES image (id))')
-
-    # EXAMPLE EXECUTION OF QUERY
-    #
-    # cur.execute("""INSERT INTO user(firstName, lastName, username, password, contributor, downloads) VALUES
-    # (?,?,?,?,?,?);""", ('Billy', 'Idol', 'theBman', 'password', True, 5))
-    # print('Added')
-    # cur.execute('SELECT * FROM user')
-    # print(cur.fetchall())
-
     con.commit()
 
 
@@ -410,8 +446,9 @@ def connect(db_filename):
     try:
         print('Connected to: {}'.format(db_filename))
         return sql.connect(db_filename, timeout=10)
-    except Exception as e:
+    except SQLConnectError as e:
         print(e)
+        return render_template('error.html', error_message=e)
 
 
 def file_allowed(filename):
@@ -428,6 +465,51 @@ def add_tags(list_of_tags, image_id):
     con.commit()
     cur.close()
     con.close()
+
+
+class SQLRegisterUserError(Exception):
+    def __str__(self):
+        return 'Unable to commit user to SQL Database'
+
+
+class LoginError(Exception):
+    def __str__(self):
+        return 'Error occurred when trying to log user in'
+
+
+class UploadPhotoError(Exception):
+    def __str__(self):
+        return 'Unable to upload photograph'
+
+
+class SearchError(Exception):
+    def __str__(self):
+        return 'Error when attempting to get to Search Results page'
+
+
+class SQLConnectError(Exception):
+    def __str__(self):
+        return 'Unable to connect to SQL Database'
+
+
+class UserPhotoError(Exception):
+    def __str__(self):
+        return 'Error when attempting to show user photos'
+
+
+class PopularPhotoError(Exception):
+    def __str__(self):
+        return 'Error when attempting to show popular photos'
+
+
+class SinglePhotoError(Exception):
+    def __str__(self):
+        return 'Error when attempting to show the requested photo'
+
+
+class SendCommentError(Exception):
+    def __str__(self):
+        return 'Error when attempting to post comment or rating'
 
 
 if __name__ == '__main__':

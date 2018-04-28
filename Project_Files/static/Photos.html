@@ -40,6 +40,7 @@
                     <ul class="dropdown-menu">
                         <li><a href="/Dashboard">Your Homepage</a></li>
                         <li><a href="/Upload">Upload Photos</a></li>
+                        <li><a href="/PrivateGallery">Private Photos</a></li>
                         <li><a href="/Logout"><span class="glyphicon glyphicon-log-in"></span>Logout</a></li>
                     </ul>
                 </div>
@@ -53,8 +54,9 @@
             <!-- Page Heading/Breadcrumbs -->
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
-                    <h3>{{ greeting }}</h3>
+                    <a href="/Dashboard">Home</a>
                 </li>
+                <li class="breadcrumb-item active">{{ greeting }} Photos</li>
             </ol>
 
             <div class="gallery">
@@ -79,6 +81,16 @@
             </div>
             <div class="gallery">
                 {% for photo in resulting_photos %}
+                    <figure class="figure">
+                        <a href="/Photo/{{ photo['image_id'] }}">
+                            <img src="../{{ photo['filepath'] }}" class="img-thumbnail" alt="">
+                        </a>
+                        <figcaption class="figure-caption">{{ photo['title'] }}</figcaption>
+                    </figure>
+                {% endfor %}
+            </div>
+            <div class="gallery">
+                {% for photo in private_photos %}
                     <figure class="figure">
                         <a href="/Photo/{{ photo['image_id'] }}">
                             <img src="../{{ photo['filepath'] }}" class="img-thumbnail" alt="">

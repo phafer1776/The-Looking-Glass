@@ -22,7 +22,6 @@ $(document).ready(function() {
                 console.log(response);
                 if (response.authenticated === true) {
                     localStorage.setItem('userdata', JSON.stringify(response.user));
-                    // populateUser();
                     location = '../../Dashboard';
                 }
                 else {
@@ -65,6 +64,7 @@ $(document).ready(function() {
         window.location.href = '../../Search/' + $('#search-bar').val();
     });
 
+    // Send the comment and rating to the server to add them to the DB.
     $('#send-comment').on('click', function() {
         window.location.href = '../../Photo/' + $('#image-id').text() + '/' + $('#comment-box').val() +
             '/' + $('#rating-selector').val();
@@ -83,12 +83,6 @@ $(document).ready(function() {
     function isAlpha(str) {
         return /^[a-zA-Z ]+$/.test(str);
     }
-
-    // function populateUser() {
-    //     var user = JSON.parse(localStorage.getItem('userdata'));
-    //     console.log(user);
-    //     $('.greeting').append(user.firstName);
-    // }
 
     // Helper function to verify that name is alphabetic and capitalize the first letter to keep DB consistent.
     // Currently not being used.
