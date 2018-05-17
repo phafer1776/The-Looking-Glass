@@ -3,7 +3,7 @@
 # Description
 Final Project for Advanced Python - Spring 2018
 
-A Flask web application built by Team 2
+A stock photo web application built with Flask by Team 2
 
 Members:
 	Timothy Carney,
@@ -11,3 +11,5 @@ Members:
 	Joshua Imarhiagbe,
 	Denis Saez Rodriguez,
 	Conner Wulf
+
+The application supports multiple user accounts, photo upload functionality, search by tags, and a rating system with comments.
