@@ -17,6 +17,19 @@ body {
     background: #fafafa;
 }
 
+table {
+    width: 75%;
+}
+
+th {
+    text-align: center;
+    height: 40px;
+}
+
+table, th, td {
+    border: 1px solid grey;
+}
+
 #overlay {
     position: fixed;
     display: none;

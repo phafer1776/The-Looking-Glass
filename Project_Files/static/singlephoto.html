@@ -110,11 +110,18 @@
                 <div class="col-md-6">
                     <h4>Comments</h4>
                     <table class="d-md-table">
-                        {% for comment in comments %}
+                        {% if comments %}
                             <tr class="d-md-table-row">
-                                <td class="d-md-table-cell">{{ comment }}</td>
+                                <th>Comment</th>
+                                <th>Username</th>
                             </tr>
-                        {% endfor %}
+                            {% for comment in comments %}
+                                <tr class="d-md-table-row">
+                                    <td class="d-md-table-cell">{{ comment[0] }}</td>
+                                    <td class="d-md-table-cell">{{ comment[1] }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
                     </table>
                 </div>
             </div>

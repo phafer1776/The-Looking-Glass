@@ -134,9 +134,7 @@ def upload_photo():
                 image_title = request.form['title']
                 tag_field = request.form['tags']
                 image_description = request.form['description']
-                is_public = request.form['private']
-                if is_public == 'private':
-                    print('private')
+                if request.form.get('private'):
                     is_public = False
                 else:
                     is_public = True
@@ -220,10 +218,8 @@ def show_user_photos(user_id):
             cur.execute("""SELECT i.id, title, rating, username, filename FROM image i INNER JOIN user u WHERE 
                           i.userID = u.id AND u.id = ?;""", (user_id,))
             results = cur.fetchall()
-            print(results)
             images = [{'image_id': row[0], 'title': row[1], 'filepath': user_path + '\\' + row[4]}
                       for row in results if row[2] >= 3.0]
-            print(images)
             return render_template('/photos.html', user_photos=images, greeting=greeting)
         else:
             return redirect('/PopularPhotos')
@@ -244,10 +240,12 @@ def load_popular_photos_page():
             cur.execute("""SELECT i.id, title, r.rating, i.userID, filename FROM image i INNER JOIN rating r WHERE 
                         i.id = r.imageID AND i.public = 1;""")
             public_photos = cur.fetchall()
-            print(public_photos)
+            no_duplicates = []
+            for photo in public_photos:
+                if photo not in no_duplicates:
+                    no_duplicates.append(photo)
             images = [{'image_id': row[0], 'title': row[1], 'filepath': base_path + '\\' + str(row[3]) + '\\' + row[4]}
-                      for row in public_photos if row[2] >= 3.5]
-            print(images)
+                      for row in no_duplicates if row[2] >= 3.5]
             return render_template('/photos.html', popular_photos=images, greeting=greeting)
     except PopularPhotoError as e:
         print(e)
@@ -261,22 +259,21 @@ def search_for_photos(value):
     converts a list of lists of tuples to a single list of tuples, and sends those to the HTML for display.
     """
     results = []
+    clean_value = value.strip().lower()
     base_path = os.path.relpath('static/uploads/')
     con = connect('looking_glass.db')
     cur = con.cursor()
     cur.execute("""SELECT i.id, title, rating, userID, filename FROM image i INNER JOIN tag t WHERE i.id = t.imageID 
-                AND t.tag = ?;""", (value,))
+                AND i.public = 1 AND t.tag = ?;""", (clean_value,))
     results.append(cur.fetchall())
-    cur.execute("""SELECT i.id, title, rating, userID, filename FROM image i WHERE i.title = ?;""", (value,))
+    cur.execute("""SELECT i.id, title, rating, userID, filename FROM image i WHERE i.public = 1 AND 
+                i.title = ?;""", (clean_value,))
     results.append(cur.fetchall())
     cur.execute("""SELECT i.id, title, rating, userID, filename FROM image i INNER JOIN user u WHERE i.userID = u.id 
-                AND u.username = ?;""", (value,))
+                AND i.public = 1 AND u.username = ?;""", (clean_value,))
     results.append(cur.fetchall())
-    print(results)
     flattened_results = [image for table_results in results for image in table_results]
-    print(flattened_results)
     duplicates_removed = list(dict((photo[0], photo) for photo in flattened_results).values())
-    print(duplicates_removed)
     images = [{'image_id': row[0], 'title': row[1], 'rating': row[2], 'filepath': base_path + '\\' + str(row[3]) + '\\'
               + row[4]} for row in duplicates_removed]
     return render_template('/photos.html', resulting_photos=images)
@@ -321,26 +318,20 @@ def load_single_photo_page(image_id):
         # Contributors have unlimited downloads. Others are limited to 10 downloads.
         if user[0] or user[1] < 10:
             download_allowed = True
-        # cur.execute("""SELECT AVG(rating) FROM rating WHERE imageID = ?;""", (image_id,))
-        # db_rating = cur.fetchone()  # Get the average rating for this image.
         db_rating = photo[2]  # photo[2] contains initial rating.
-        print(db_rating)
-        # if db_rating[0]:
-        #     overall_rating = (db_rating[0] + photo[2]) / 2
-        # print(overall_rating)
         photo_info = {'image_id': photo[0], 'title': photo[1], 'rating': db_rating, 'description': photo[3],
                       'username': photo[6], 'filepath': base_path + '\\' + str(photo[4]) + '\\' + photo[5]}
         print(photo_info['filepath'])
-        cur.execute("""SELECT imageComment FROM comment WHERE imageID = ?;""", (image_id,))
+        cur.execute("""SELECT c.imageComment, u.username FROM comment c INNER JOIN user u WHERE c.userID = u.id AND 
+                    c.imageID = ?;""", (image_id,))
+
         db_comments = cur.fetchall()  # Get all the comments for this image.
-        flattened_comments = [image[0] for image in db_comments]
-        print(flattened_comments)
         dl_count = user[1] + 1
         cur.execute("""UPDATE user SET downloads = ? WHERE id = ?;""", (dl_count, session['user_id']))
         con.commit()
         cur.close()
         con.close()
-        return render_template('/singlephoto.html', photo=photo_info, comments=flattened_comments,
+        return render_template('/singlephoto.html', photo=photo_info, comments=db_comments,
                                can_download=download_allowed)
     except SinglePhotoError as e:
         print(e)
