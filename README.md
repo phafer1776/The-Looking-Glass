@@ -9,7 +9,6 @@ Members:
 	Timothy Carney,
 	Paul Hafer,
 	Joshua Imarhiagbe,
-	Denis Saez Rodriguez,
 	Conner Wulf
 
 The application supports multiple user accounts, photo upload functionality, search by tags, and a rating system with comments.
